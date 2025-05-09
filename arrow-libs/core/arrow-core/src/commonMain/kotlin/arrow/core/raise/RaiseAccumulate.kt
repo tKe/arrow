@@ -8,6 +8,7 @@ import arrow.core.EitherNel
 import arrow.core.NonEmptyList
 import arrow.core.NonEmptySet
 import arrow.core.collectionSizeOrDefault
+import arrow.core.raise.RaiseAccumulate.Value
 import arrow.core.toNonEmptyListOrNull
 import arrow.core.toNonEmptySetOrNull
 import kotlin.contracts.ExperimentalContracts
@@ -19,6 +20,7 @@ import kotlin.experimental.ExperimentalTypeInference
 import kotlin.jvm.JvmMultifileClass
 import kotlin.jvm.JvmName
 import kotlin.jvm.JvmSynthetic
+import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 /**
@@ -990,10 +992,13 @@ public open class RaiseAccumulate<Error>(
     }
   }
 
+  @Suppress("EXTENSION_SHADOWED_BY_MEMBER", "NOTHING_TO_INLINE")
   public inline operator fun <A> Value<A>.getValue(thisRef: Nothing?, property: KProperty<*>): A = value
 
-  public sealed interface Value<out A> {
+  public sealed interface Value<out A> : ReadOnlyProperty<Nothing?, A> {
     public val value: A
+
+    override fun getValue(thisRef: Nothing?, property: KProperty<*>): A = value
   }
 
   @PublishedApi internal inner class Error: Value<Nothing> {
