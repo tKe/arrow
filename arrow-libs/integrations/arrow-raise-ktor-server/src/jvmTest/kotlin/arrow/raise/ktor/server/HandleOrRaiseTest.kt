@@ -1,8 +1,7 @@
 package arrow.raise.ktor.server
 
 import arrow.core.raise.ensure
-import arrow.core.raise.recover
-import arrow.core.raise.withError
+import arrow.raise.ktor.server.internal.withError
 import io.kotest.assertions.asClue
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.collections.shouldHaveSize
@@ -111,7 +110,7 @@ class HandleOrRaiseTest {
     val response = client.get { expectSuccess = false }
 
     assertSoftly {
-      response.status shouldBe HttpStatusCode.BadRequest
+      response.status shouldBe BadRequest
       response.contentType().shouldNotBeNull().withoutParameters() shouldBe ContentType.Text.CSV
       response.bodyAsText() shouldBe "Hello,world!"
     }

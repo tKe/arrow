@@ -4,29 +4,35 @@
 package arrow.raise.ktor.server.request
 
 import arrow.core.raise.Raise
-import arrow.raise.ktor.server.RaiseRoutingContext
+import arrow.raise.ktor.server.Response
 import arrow.raise.ktor.server.raiseError
-import io.ktor.server.routing.RoutingCall
+import io.ktor.server.routing.*
 import io.ktor.util.reflect.*
 import kotlin.jvm.JvmMultifileClass
 import kotlin.jvm.JvmName
 
+context(r: Raise<RequestError>)
 @JvmName("queryOrRaiseReified")
-public inline fun <reified A : Any> Raise<RequestError>.queryOrRaise(call: RoutingCall, name: String): A =
-  parameterOrRaise(call.queryParameters, Parameter.Query(name), typeInfo<A>())
+public inline fun <reified A : Any> RoutingCall.queryOrRaise(name: String): A =
+  queryParameters.parameterOrRaise(Parameter.Query(name), typeInfo<A>())
 
-public inline fun <A : Any> Raise<RequestError>.queryOrRaise(call: RoutingCall, name: String, transform: Raise<String>.(String) -> A): A =
-  parameterOrRaise(call.queryParameters, Parameter.Query(name), transform)
+context(r: Raise<RequestError>)
+public inline fun <A : Any> RoutingCall.queryOrRaise(name: String, transform: Raise<String>.(String) -> A): A =
+  queryParameters.parameterOrRaise(Parameter.Query(name), transform)
 
-public fun Raise<RequestError>.queryOrRaise(call: RoutingCall, name: String): String =
-  parameterOrRaise(call.queryParameters, Parameter.Query(name))
+context(r: Raise<RequestError>)
+public fun RoutingCall.queryOrRaise(name: String): String =
+  queryParameters.parameterOrRaise(Parameter.Query(name))
 
+context(r: Raise<Response>)
 @JvmName("queryOrRaiseReified")
-public inline fun <reified A : Any> RaiseRoutingContext.queryOrRaise(name: String): A =
-  raiseError { queryOrRaise<A>(call, name) }
+public inline fun <reified A : Any> RoutingContext.queryOrRaise(name: String): A =
+  raiseError { call.queryOrRaise<A>(name) }
 
-public inline fun <A : Any> RaiseRoutingContext.queryOrRaise(name: String, transform: Raise<String>.(String) -> A): A =
-  raiseError { queryOrRaise(call, name, transform) }
+context(r: Raise<Response>)
+public inline fun <A : Any> RoutingContext.queryOrRaise(name: String, transform: Raise<String>.(String) -> A): A =
+  raiseError { call.queryOrRaise(name, transform) }
 
-public fun RaiseRoutingContext.queryOrRaise(name: String): String =
-  raiseError { queryOrRaise(call, name) }
+context(r: Raise<Response>)
+public fun RoutingContext.queryOrRaise(name: String): String =
+  raiseError { call.queryOrRaise(name) }
