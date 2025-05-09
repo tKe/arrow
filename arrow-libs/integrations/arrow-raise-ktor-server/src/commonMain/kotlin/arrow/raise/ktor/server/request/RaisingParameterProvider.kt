@@ -1,6 +1,7 @@
 package arrow.raise.ktor.server.request
 
 import arrow.core.raise.Raise
+import arrow.core.raise.recover
 import io.ktor.http.*
 import io.ktor.util.reflect.*
 import kotlin.jvm.JvmInline
@@ -9,13 +10,13 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 public abstract class RaisingParameterProvider internal constructor(
-  private val raise: Raise<RequestError>,
+  private val raise: (RequestError) -> Nothing,
   private val parameters: Parameters,
 ) {
   protected abstract fun parameter(name: String): Parameter
 
   public companion object {
-    public operator fun invoke(raise: Raise<RequestError>, parameters: Parameters, parameter: (String) -> Parameter): RaisingParameterProvider =
+    public operator fun invoke(raise: (RequestError) -> Nothing, parameters: Parameters, parameter: (String) -> Parameter): RaisingParameterProvider =
       object : RaisingParameterProvider(raise, parameters) {
         override fun parameter(name: String): Parameter = parameter(name)
       }
@@ -23,15 +24,15 @@ public abstract class RaisingParameterProvider internal constructor(
 
   @PublishedApi
   internal fun getString(name: String): String =
-    raise.parameterOrRaise(parameters, parameter(name))
+    recover({ parameterOrRaise(parameters, parameter(name)) }, raise)
 
   @PublishedApi
   internal fun <O : Any> getReified(name: String, typeInfo: TypeInfo): O =
-    raise.parameterOrRaise(parameters, parameter(name), typeInfo)
+    recover({ parameterOrRaise(parameters, parameter(name), typeInfo)}, raise)
 
   @PublishedApi
   internal fun <O : Any> getTransformed(name: String, transform: ParameterTransform<O>): O =
-    raise.parameterOrRaise(parameters, parameter(name), transform)
+    recover({ parameterOrRaise(parameters, parameter(name), transform) }, raise)
 
   // type-bound delegate providers
   public operator fun invoke(): Property<String> =

@@ -1,6 +1,5 @@
 package arrow.raise.ktor.server
 
-import arrow.core.nel
 import arrow.core.raise.ExperimentalRaiseAccumulateApi
 import arrow.core.raise.Raise
 import arrow.core.raise.RaiseAccumulate
@@ -20,20 +19,15 @@ public class RaiseRoutingContext(
   private val raise: Raise<Response>,
   routingContext: RoutingContext,
 ) : CallRaiseContext(routingContext.call), Raise<Response> by raise {
-  @PublishedApi
-  internal val errorRaise: Raise<RequestError> =
-    object : Raise<RequestError> {
-      override fun raise(requestError: RequestError) = raise(call.errorsResponse(requestError.nel()))
-    }
+  public fun raise(requestError: RequestError): Nothing = raise(call.errorResponse(requestError))
 
-  public fun raise(requestError: RequestError): Nothing = errorRaise.raise(requestError)
-
-  public val pathRaising: RaisingParameterProvider = call.pathParameters.delegate(Parameter::Path)
-  public val queryRaising: RaisingParameterProvider = call.queryParameters.delegate(Parameter::Query)
+  public val pathRaising: RaisingParameterProvider = call.pathParameters.asDelegateProvider(Parameter::Path)
+  public val queryRaising: RaisingParameterProvider = call.queryParameters.asDelegateProvider(Parameter::Query)
   public suspend fun formParametersDelegate(): RaisingParameterProvider =
-    errorRaise.receiveOrRaise<Parameters>(call).delegate(Parameter::Form)
+    receiveOrRaise<Parameters>().asDelegateProvider(Parameter::Form)
 
-  private fun Parameters.delegate(parameter: (String) -> Parameter) = RaisingParameterProvider(errorRaise, this, parameter)
+  private fun Parameters.asDelegateProvider(parameter: (String) -> Parameter) =
+    RaisingParameterProvider(::raise, this, parameter)
 }
 
 /** Temporary intersection type, until we have context parameters */

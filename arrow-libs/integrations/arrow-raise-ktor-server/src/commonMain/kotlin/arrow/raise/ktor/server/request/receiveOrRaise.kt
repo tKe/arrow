@@ -7,6 +7,7 @@ package arrow.raise.ktor.server.request
 import arrow.core.raise.Raise
 import arrow.core.raise.catch
 import arrow.raise.ktor.server.RaiseRoutingContext
+import arrow.raise.ktor.server.raiseError
 import io.ktor.serialization.*
 import io.ktor.server.plugins.*
 import io.ktor.server.plugins.ContentTransformationException
@@ -27,10 +28,10 @@ public suspend inline fun <reified A : Any> Raise<RequestError>.receiveNullableO
 
 // RaiseRoutingContext (default error response)
 public suspend inline fun <reified A : Any> RaiseRoutingContext.receiveOrRaise(): A =
-  errorRaise.receiveOrRaise(call, typeInfo<A>())
+  raiseError { receiveOrRaise(call, typeInfo<A>()) }
 
 public suspend inline fun <reified A : Any> RaiseRoutingContext.receiveNullableOrRaise(): A? =
-  errorRaise.receiveNullableOrRaise(call, typeInfo<A>())
+  raiseError { receiveNullableOrRaise(call, typeInfo<A>()) }
 
 @PublishedApi
 internal suspend fun <A : Any> Raise<Malformed>.receiveOrRaise(

@@ -22,9 +22,9 @@ public class CallValidationContext @PublishedApi internal constructor(
   internal val call: RoutingCall,
   raise: Raise<NonEmptyList<RequestError>>,
 ) : RaiseAccumulate<RequestError>(raise) {
-  public val pathAccumulating: AccumulatingParameterProvider = call.pathParameters.delegate(Parameter::Path)
-  public val queryAccumulating: AccumulatingParameterProvider = call.queryParameters.delegate(Parameter::Query)
-  public suspend fun formParametersDelegate(): AccumulatingParameterProvider = receiveOrRaise<Parameters>(call).delegate(Parameter::Form)
+  public val pathAccumulating: AccumulatingParameterProvider = call.pathParameters.asDelegateProvider(Parameter::Path)
+  public val queryAccumulating: AccumulatingParameterProvider = call.queryParameters.asDelegateProvider(Parameter::Query)
+  public suspend fun formParametersDelegate(): AccumulatingParameterProvider = receiveOrRaise<Parameters>(call).asDelegateProvider(Parameter::Form)
 
   @ExperimentalRaiseAccumulateApi
   public suspend inline fun <reified A : Any> receiveAccumulating(): Value<A> =
@@ -34,7 +34,7 @@ public class CallValidationContext @PublishedApi internal constructor(
   public suspend inline fun <reified A : Any> receiveNullableAccumulating(): Value<A?> =
     accumulating { receiveNullableOrRaise(call, typeInfo<A>()) }
 
-  private inline fun Parameters.delegate(crossinline parameter: (String) -> Parameter) =
+  private fun Parameters.asDelegateProvider(parameter: (String) -> Parameter) =
     AccumulatingParameterProvider(this@CallValidationContext, this, parameter)
 }
 

@@ -47,7 +47,6 @@ public final class arrow/raise/ktor/server/RaiseRoutingContext : arrow/raise/kto
 	public fun bindAll-1TN0_VU (Ljava/util/Set;)Ljava/util/Set;
 	public fun bindAll-vcjLgH4 (Ljava/util/List;)Ljava/util/List;
 	public final fun formParametersDelegate (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun getErrorRaise ()Larrow/core/raise/Raise;
 	public final fun getPathRaising ()Larrow/raise/ktor/server/request/RaisingParameterProvider;
 	public final fun getQueryRaising ()Larrow/raise/ktor/server/request/RaisingParameterProvider;
 	public fun invoke (Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
@@ -193,7 +192,7 @@ public abstract class arrow/raise/ktor/server/request/RaisingParameterProvider {
 }
 
 public final class arrow/raise/ktor/server/request/RaisingParameterProvider$Companion {
-	public final fun invoke (Larrow/core/raise/Raise;Lio/ktor/http/Parameters;Lkotlin/jvm/functions/Function1;)Larrow/raise/ktor/server/request/RaisingParameterProvider;
+	public final fun invoke (Lkotlin/jvm/functions/Function1;Lio/ktor/http/Parameters;Lkotlin/jvm/functions/Function1;)Larrow/raise/ktor/server/request/RaisingParameterProvider;
 }
 
 public final class arrow/raise/ktor/server/request/ReceiveBody : arrow/raise/ktor/server/request/RequestComponent {

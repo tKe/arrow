@@ -108,7 +108,7 @@ abstract class arrow.raise.ktor.server.request/RaisingParameterProvider { // arr
     final inline fun <#A1: reified kotlin/Any> invoke(kotlin/String): kotlin.properties/ReadOnlyProperty<kotlin/Nothing?, #A1> // arrow.raise.ktor.server.request/RaisingParameterProvider.invoke|invoke(kotlin.String){0§<kotlin.Any>}[0]
 
     final object Companion { // arrow.raise.ktor.server.request/RaisingParameterProvider.Companion|null[0]
-        final fun invoke(arrow.core.raise/Raise<arrow.raise.ktor.server.request/RequestError>, io.ktor.http/Parameters, kotlin/Function1<kotlin/String, arrow.raise.ktor.server.request/Parameter>): arrow.raise.ktor.server.request/RaisingParameterProvider // arrow.raise.ktor.server.request/RaisingParameterProvider.Companion.invoke|invoke(arrow.core.raise.Raise<arrow.raise.ktor.server.request.RequestError>;io.ktor.http.Parameters;kotlin.Function1<kotlin.String,arrow.raise.ktor.server.request.Parameter>){}[0]
+        final fun invoke(kotlin/Function1<arrow.raise.ktor.server.request/RequestError, kotlin/Nothing>, io.ktor.http/Parameters, kotlin/Function1<kotlin/String, arrow.raise.ktor.server.request/Parameter>): arrow.raise.ktor.server.request/RaisingParameterProvider // arrow.raise.ktor.server.request/RaisingParameterProvider.Companion.invoke|invoke(kotlin.Function1<arrow.raise.ktor.server.request.RequestError,kotlin.Nothing>;io.ktor.http.Parameters;kotlin.Function1<kotlin.String,arrow.raise.ktor.server.request.Parameter>){}[0]
     }
 }
 
@@ -172,8 +172,6 @@ final class arrow.raise.ktor.server/RaiseErrorResponseConfig { // arrow.raise.kt
 final class arrow.raise.ktor.server/RaiseRoutingContext : arrow.core.raise/Raise<arrow.raise.ktor.server/Response>, arrow.raise.ktor.server/CallRaiseContext { // arrow.raise.ktor.server/RaiseRoutingContext|null[0]
     constructor <init>(arrow.core.raise/Raise<arrow.raise.ktor.server/Response>, io.ktor.server.routing/RoutingContext) // arrow.raise.ktor.server/RaiseRoutingContext.<init>|<init>(arrow.core.raise.Raise<arrow.raise.ktor.server.Response>;io.ktor.server.routing.RoutingContext){}[0]
 
-    final val errorRaise // arrow.raise.ktor.server/RaiseRoutingContext.errorRaise|{}errorRaise[0]
-        final fun <get-errorRaise>(): arrow.core.raise/Raise<arrow.raise.ktor.server.request/RequestError> // arrow.raise.ktor.server/RaiseRoutingContext.errorRaise.<get-errorRaise>|<get-errorRaise>(){}[0]
     final val pathRaising // arrow.raise.ktor.server/RaiseRoutingContext.pathRaising|{}pathRaising[0]
         final fun <get-pathRaising>(): arrow.raise.ktor.server.request/RaisingParameterProvider // arrow.raise.ktor.server/RaiseRoutingContext.pathRaising.<get-pathRaising>|<get-pathRaising>(){}[0]
     final val queryRaising // arrow.raise.ktor.server/RaiseRoutingContext.queryRaising|{}queryRaising[0]
