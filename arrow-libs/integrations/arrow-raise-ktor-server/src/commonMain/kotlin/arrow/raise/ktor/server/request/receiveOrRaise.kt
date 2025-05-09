@@ -6,7 +6,8 @@ package arrow.raise.ktor.server.request
 
 import arrow.core.raise.Raise
 import arrow.core.raise.catch
-import arrow.raise.ktor.server.RaiseRoutingContext
+import arrow.raise.ktor.server.Response
+import arrow.raise.ktor.server.raiseError
 import io.ktor.serialization.*
 import io.ktor.server.plugins.*
 import io.ktor.server.plugins.ContentTransformationException
@@ -19,30 +20,33 @@ import kotlin.contracts.contract
 import kotlin.jvm.JvmMultifileClass
 import kotlin.jvm.JvmName
 
-public suspend inline fun <reified A : Any> Raise<RequestError>.receiveOrRaise(call: RoutingCall): A =
-  receiveOrRaise(call, typeInfo<A>())
+context(r: Raise<RequestError>)
+public suspend inline fun <reified A : Any> receiveOrRaise(call: RoutingCall): A =
+  call.receiveOrRaise(typeInfo<A>())
 
-public suspend inline fun <reified A : Any> Raise<RequestError>.receiveNullableOrRaise(call: RoutingCall): A? =
-  receiveNullableOrRaise(call, typeInfo<A>())
+context(r: Raise<RequestError>)
+public suspend inline fun <reified A : Any> receiveNullableOrRaise(call: RoutingCall): A? =
+  call.receiveNullableOrRaise(typeInfo<A>())
 
-// RaiseRoutingContext (default error response)
-public suspend inline fun <reified A : Any> RaiseRoutingContext.receiveOrRaise(): A =
-  errorRaise.receiveOrRaise(call, typeInfo<A>())
+context(r: Raise<Response>)
+public suspend inline fun <reified A : Any> RoutingContext.receiveOrRaise(): A =
+  raiseError { call.receiveOrRaise(typeInfo<A>()) }
 
-public suspend inline fun <reified A : Any> RaiseRoutingContext.receiveNullableOrRaise(): A? =
-  errorRaise.receiveNullableOrRaise(call, typeInfo<A>())
+context(r: Raise<Response>)
+public suspend inline fun <reified A : Any> RoutingContext.receiveNullableOrRaise(): A? =
+  raiseError { call.receiveNullableOrRaise(typeInfo<A>()) }
 
+context(r: Raise<Malformed>)
 @PublishedApi
-internal suspend fun <A : Any> Raise<Malformed>.receiveOrRaise(
-  call: RoutingCall,
+internal suspend fun <A : Any> RoutingCall.receiveOrRaise(
   typeInfo: TypeInfo,
-): A = handleConversionError(typeInfo) { call.receive(it) }
+): A = r.handleConversionError(typeInfo) { receive(it) }
 
+context(r: Raise<Malformed>)
 @PublishedApi
-internal suspend fun <A : Any> Raise<Malformed>.receiveNullableOrRaise(
-  call: RoutingCall,
+internal suspend fun <A : Any> RoutingCall.receiveNullableOrRaise(
   typeInfo: TypeInfo,
-): A? = handleConversionError(typeInfo) { call.receiveNullable(it) }
+): A? = r.handleConversionError(typeInfo) { receiveNullable(it) }
 
 private inline fun <A> Raise<Malformed>.handleConversionError(
   typeInfo: TypeInfo,

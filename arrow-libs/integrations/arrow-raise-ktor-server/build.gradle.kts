@@ -4,6 +4,8 @@ plugins {
 }
 
 kotlin {
+  compilerOptions.freeCompilerArgs.add("-Xcontext-parameters")
+
   sourceSets {
     commonMain {
       dependencies {
@@ -14,6 +16,7 @@ kotlin {
 
     commonTest {
       dependencies {
+        implementation(projects.arrowCore)
         implementation(libs.ktor.server.contentNegotiation)
         implementation(libs.ktor.serialization.kotlinxJson)
         implementation(libs.ktor.test)
