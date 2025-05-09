@@ -1,5 +1,6 @@
 package arrow.raise.ktor.server
 
+import arrow.core.raise.Raise
 import arrow.raise.ktor.server.request.receiveNullableOrRaise
 import io.ktor.http.*
 import io.ktor.server.http.content.*
@@ -7,13 +8,14 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.util.reflect.*
 
-public typealias RespondingRaiseRoutingHandler<TResponse> = suspend RaiseRoutingContext.() -> TResponse
+public typealias RespondingRaiseRoutingHandler<TResponse> = suspend context(Raise<Response>) RoutingContext.() -> TResponse
 
 // due to compilation ambiguity between n-ary lambdas on function resolution, by using this SAM on the API it's resolved with a lower priority
 // which mitigates the ambiguity of `handler { }` vs `handler { it -> }`
 // equivalent of `suspend context(Raise<Response>) RoutingContext.(TRequest) -> TResponse`
 public fun interface ReceivingRespondingRaiseRoutingHandler<TRequest, TResponse>{
-  public suspend fun RaiseRoutingContext.handle(request: TRequest): TResponse
+  context(_: Raise<Response>)
+  public suspend fun RoutingContext.handle(request: TRequest): TResponse
 }
 
 public suspend inline fun <reified TResponse> RoutingContext.respondOrRaise(
@@ -46,7 +48,7 @@ internal suspend inline fun <TRequest, TResponse> RoutingContext.respondOrRaise(
 ): Unit = handleOrRaise {
   val request: TRequest = raiseError {
     @Suppress("UNCHECKED_CAST") // TODO: if TRequest is nullable do we break things with this?
-    receiveNullableOrRaise<Any>(call, requestTypeInfo) as TRequest
+    call.receiveNullableOrRaise<Any>(requestTypeInfo) as TRequest
   }
   val result = with(body) { handle(request) }
   call.respondSafely(statusCode, result, responseTypeInfo)
