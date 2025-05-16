@@ -3,9 +3,9 @@ package arrow.raise.ktor.server
 import arrow.core.raise.Raise
 import arrow.raise.ktor.server.Response.Companion.Response
 import arrow.raise.ktor.server.Response.Companion.invoke
-import arrow.raise.ktor.server.internal.ensureNotNull
-import arrow.raise.ktor.server.internal.raise
-import arrow.raise.ktor.server.internal.withError
+import arrow.raise.context.ensureNotNull
+import arrow.raise.context.raise
+import arrow.raise.context.withError
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.shouldBe
 import io.ktor.client.request.*

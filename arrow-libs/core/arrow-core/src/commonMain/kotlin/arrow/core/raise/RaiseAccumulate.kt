@@ -826,7 +826,7 @@ public inline fun <K, Error, A, B> Raise<NonEmptyList<Error>>.mapValuesOrAccumul
 
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING, message = "This API is work-in-progress and is subject to change.")
 @Retention(AnnotationRetention.BINARY)
-@Target(AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
 public annotation class ExperimentalRaiseAccumulateApi
 
 @ExperimentalRaiseAccumulateApi

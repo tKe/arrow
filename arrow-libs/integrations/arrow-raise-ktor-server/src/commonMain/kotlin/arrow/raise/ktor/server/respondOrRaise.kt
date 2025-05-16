@@ -46,7 +46,7 @@ internal suspend inline fun <TRequest, TResponse> RoutingContext.respondOrRaise(
   responseTypeInfo: TypeInfo,
   body: ReceivingRespondingRaiseRoutingHandler<TRequest, TResponse>,
 ): Unit = handleOrRaise {
-  val request: TRequest = raiseError {
+  val request: TRequest = raisingErrorResponse {
     @Suppress("UNCHECKED_CAST") // TODO: if TRequest is nullable do we break things with this?
     call.receiveNullableOrRaise<Any>(requestTypeInfo) as TRequest
   }

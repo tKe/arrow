@@ -17,12 +17,12 @@ import kotlin.contracts.contract
 import kotlin.jvm.JvmMultifileClass
 import kotlin.jvm.JvmName
 
-public typealias ParameterTransform<O> = context(Raise<String>) (String) -> O
+public typealias ParameterTransform<O> = Raise<String>.(String) -> O
 
 context(r: Raise<RequestError>)
 @PublishedApi
-internal inline fun <P : Parameter, A : Any> Parameters.parameterOrRaise(
-  parameter: P,
+internal inline fun <A : Any> Parameters.parameterOrRaise(
+  parameter: Parameter,
   transform: ParameterTransform<A>,
 ): A {
   contract { callsInPlace(transform, AT_MOST_ONCE) }
@@ -34,8 +34,8 @@ internal inline fun <P : Parameter, A : Any> Parameters.parameterOrRaise(
 
 context(r: Raise<MissingParameter>)
 @PublishedApi
-internal fun <P : Parameter> Parameters.parameterOrRaise(
-  parameter: P,
+internal fun Parameters.parameterOrRaise(
+  parameter: Parameter,
 ): String = r.ensureNotNull(get(parameter.name)) { MissingParameter(parameter) }
 
 context(r: Raise<RequestError>)

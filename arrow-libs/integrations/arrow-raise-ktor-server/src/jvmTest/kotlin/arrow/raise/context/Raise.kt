@@ -1,8 +1,9 @@
 // Temporary copy until arrow-raise-contextual lands in main
 
 @file:OptIn(ExperimentalTypeInference::class, ExperimentalContracts::class)
+@file:Suppress("RedundantVisibilityModifier", "Unused")
 
-package arrow.raise.ktor.server.internal
+package arrow.raise.context
 
 import arrow.core.Either
 import arrow.core.NonEmptyList

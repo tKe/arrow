@@ -4,6 +4,7 @@ import arrow.core.raise.Raise
 import arrow.core.raise.RaiseDSL
 import arrow.core.raise.recover
 import arrow.raise.ktor.server.Response.Companion.Response
+import arrow.raise.ktor.server.request.RequestError
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.routing.*
@@ -33,14 +34,14 @@ public inline fun <reified T> Raise<Response>.raise(statusCode: HttpStatusCode, 
 context(r: Raise<Response>)
 @RaiseDSL
 @JvmName("raiseOutgoingContent")
-public fun raise(outgoingContent: OutgoingContent): Nothing = r.raise(Response(outgoingContent))
+public fun raise(outgoingContent: OutgoingContent): Nothing = r.raise(outgoingContent)
 
 context(r: Raise<Response>)
 @RaiseDSL
 @JvmName("raiseStatusCode")
-public fun raise(statusCode: HttpStatusCode): Nothing = r.raise(Response(statusCode))
+public fun raise(statusCode: HttpStatusCode): Nothing = r.raise(statusCode)
 
 context(r: Raise<Response>)
 @RaiseDSL
 @JvmName("raiseStatusCodeWithPayload")
-public inline fun <reified T> raise(statusCode: HttpStatusCode, payload: T): Nothing = r.raise(Response(statusCode, payload))
+public inline fun <reified T> raise(statusCode: HttpStatusCode, payload: T): Nothing = r.raise(statusCode, payload)
