@@ -19,38 +19,38 @@ import kotlin.jvm.JvmName
 
 public typealias ParameterTransform<O> = Raise<String>.(String) -> O
 
+context(r: Raise<RequestError>)
 @PublishedApi
-internal inline fun <P : Parameter, A : Any> Raise<RequestError>.parameterOrRaise(
-  parameters: Parameters,
-  parameter: P,
+internal inline fun <A : Any> Parameters.parameterOrRaise(
+  parameter: Parameter,
   transform: ParameterTransform<A>,
 ): A {
   contract { callsInPlace(transform, AT_MOST_ONCE) }
-  val value = parameterOrRaise(parameters, parameter)
-  return recover({ transform(value) }) {
-    raise(Malformed(parameter, it))
+  val value = parameterOrRaise(parameter)
+  return recover({ transform(this, value) }) {
+    r.raise(Malformed(parameter, it))
   }
 }
 
+context(r: Raise<MissingParameter>)
 @PublishedApi
-internal fun <P : Parameter> Raise<MissingParameter>.parameterOrRaise(
-  parameters: Parameters,
-  parameter: P,
-): String = ensureNotNull(parameters[parameter.name]) { MissingParameter(parameter) }
+internal fun Parameters.parameterOrRaise(
+  parameter: Parameter,
+): String = r.ensureNotNull(get(parameter.name)) { MissingParameter(parameter) }
 
+context(r: Raise<RequestError>)
 @PublishedApi
-internal fun <A : Any> Raise<RequestError>.parameterOrRaise(
-  parameters: Parameters,
+internal fun <A : Any> Parameters.parameterOrRaise(
   parameter: Parameter,
   typeInfo: TypeInfo,
 ): A {
   // following what [Parameters.getOrFail] does...
-  val values = ensureNotNull(parameters.getAll(parameter.name)) { MissingParameter(parameter) }
+  val values = r.ensureNotNull(getAll(parameter.name)) { MissingParameter(parameter) }
   return catch({
     @Suppress("UNCHECKED_CAST")
     DefaultConversionService.fromValues(values, typeInfo) as A
   }) {
-    raise(
+    r.raise(
       Malformed(
         component = parameter,
         message = "couldn't be parsed/converted to ${typeInfo.simpleName}",

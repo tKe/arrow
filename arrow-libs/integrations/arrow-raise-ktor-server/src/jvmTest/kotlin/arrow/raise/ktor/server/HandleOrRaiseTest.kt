@@ -1,8 +1,7 @@
 package arrow.raise.ktor.server
 
 import arrow.core.raise.ensure
-import arrow.core.raise.recover
-import arrow.core.raise.withError
+import arrow.raise.context.withError
 import io.kotest.assertions.asClue
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.collections.shouldHaveSize
@@ -111,7 +110,7 @@ class HandleOrRaiseTest {
     val response = client.get { expectSuccess = false }
 
     assertSoftly {
-      response.status shouldBe HttpStatusCode.BadRequest
+      response.status shouldBe BadRequest
       response.contentType().shouldNotBeNull().withoutParameters() shouldBe ContentType.Text.CSV
       response.bodyAsText() shouldBe "Hello,world!"
     }
@@ -125,7 +124,7 @@ class HandleOrRaiseTest {
         handleOrRaise {
           val value = call.parameters["value"]?.toIntOrNull() ?: raise(BadRequest)
 
-          withError({ raise(HttpStatusCode.InternalServerError, it.msg) }) {
+          withError<Response, _, _>({ raise(HttpStatusCode.InternalServerError, it.msg) }) {
             ensure(value > 3) {
               MyError("$value is not greater than three")
             }

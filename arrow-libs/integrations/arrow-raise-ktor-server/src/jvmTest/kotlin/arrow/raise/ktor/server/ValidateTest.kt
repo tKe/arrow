@@ -5,21 +5,20 @@ import arrow.core.raise.ExperimentalRaiseAccumulateApi
 import arrow.core.raise.accumulate
 import arrow.core.raise.ensure
 import arrow.core.raise.ensureNotNull
-import arrow.core.raise.withError
+import arrow.raise.context.*
 import arrow.raise.ktor.server.Response.Companion.invoke
-import arrow.raise.ktor.server.request.RequestError
-import arrow.raise.ktor.server.request.pathOrRaise
-import arrow.raise.ktor.server.request.toSimpleMessage
-import arrow.raise.ktor.server.request.validate
+import arrow.raise.ktor.server.delegation.*
+import arrow.raise.ktor.server.request.*
+import io.kotest.assertions.asClue
 import io.kotest.assertions.assertSoftly
-import io.kotest.matchers.equals.shouldBeEqual
+import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
 import io.ktor.client.request.*
-import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.testing.*
 import kotlinx.serialization.Serializable
@@ -48,11 +47,12 @@ class ValidateTest {
     install(ContentNegotiation) { json() }
     routing {
       putOrRaise("/user/{id}") {
-        val person = withError({ raise(call.errorsResponse(it)) }) {
+        val person = withError<Response, _, _>(call::errorsResponse) {
           accumulate {
             val name by accumulating { pathOrRaise("name") }
             val age by accumulating { queryOrRaise<Int>("age") }
             val info by accumulating { receiveOrRaise<Info>() }
+            call.response.header("x-accumulation-complete", "true")
             Person(name, age, info)
           }
         }
@@ -65,6 +65,7 @@ class ValidateTest {
       setBody("""{"emule":"donkey"}""")
     }.let {
       assertSoftly {
+        it.headers.names() shouldContain "x-accumulation-complete"
         it.status shouldBe HttpStatusCode.BadRequest
         it.bodyAsText() shouldBe
           """
@@ -77,81 +78,12 @@ class ValidateTest {
   }
 
   @Test
-  fun `accumulate from form parameters`() = testApplication {
-    install(ContentNegotiation) { json() }
-    routing {
-      putOrRaise("/user/{name}") {
-        val person = validate {
-          val name by pathAccumulating()
-          val form = formParametersDelegate()
-          val age by form<Int>()
-          val email by form("info.email")
-          Person(name, age, Info(email))
-        }
-
-        HttpStatusCode.Created(person)
-      }
-    }
-
-    client.put("/user/hello") {
-      setBody(FormDataContent(parameters {
-        append("age", "123")
-        append("info.email", "don@key.oatie")
-      }))
-    }.let {
-      assertSoftly {
-        it.status shouldBe HttpStatusCode.Created
-        Json.Default.parseToJsonElement(it.bodyAsText()) shouldBeEqual buildJsonObject {
-          put("name", "hello")
-          put("age", 123)
-          putJsonObject("info") { put("email", "don@key.oatie") }
-        }
-      }
-    }
-  }
-
-  @Test
-  fun `manual validation without syntactic sugar`() = testApplication {
-    install(ContentNegotiation) { json() }
-    routing {
-      put("/user/{name}") {
-        val response = call.validate(call::errorsResponse) {
-          val name: String by pathAccumulating
-          val form = formParametersDelegate()
-          val age by form<Int>()
-          val email by form("info.email")
-
-          Response.payload(Person(name, age, Info(email)), HttpStatusCode.Created)
-        }
-
-        response.respondTo(call)
-      }
-    }
-
-    client.put("/user/hello") {
-      setBody(FormDataContent(parameters {
-        append("age", "123")
-        append("info.email", "don@key.oatie")
-      }))
-    }.let {
-      assertSoftly {
-        it.status shouldBe HttpStatusCode.Created
-        Json.Default.parseToJsonElement(it.bodyAsText()) shouldBeEqual buildJsonObject {
-          put("name", "hello")
-          put("age", 123)
-          putJsonObject("info") { put("email", "don@key.oatie") }
-        }
-      }
-    }
-  }
-
-  @Test
   fun `validate by delegation multiple errors`() = testApplication {
     install(ContentNegotiation) { json() }
     routing {
       putOrRaise("/user/{id}") {
         val person = validate {
-          val name: String by pathAccumulating
+          val name: String by pathAccumulating()
           val age: Int by queryAccumulating {
             val age = ensureNotNull(it.toIntOrNull()) { "not a valid number" }
             ensure(age >= 21) { "too young" }
@@ -191,8 +123,8 @@ class ValidateTest {
     routing {
       putOrRaise("/user/{name}") {
         val person = validate {
-          val name: String by pathAccumulating("user-name")
-          val age: Int by queryAccumulating
+          val name: String by pathAccumulating["user-name"]
+          val age: Int by queryAccumulating["age"]
           val info: Info by receiveAccumulating()
           Person(name, age, info)
         }
@@ -208,10 +140,10 @@ class ValidateTest {
         it.status shouldBe HttpStatusCode.BadRequest
         it.bodyAsText() shouldBe
           """
-                  Missing path parameter 'user-name'.
-                  Malformed query parameter 'age' couldn't be parsed/converted to Int: For input string: "old"
-                  Malformed body could not be deserialized to Info: Cannot transform this request's content to arrow.raise.ktor.server.ValidateTest.Info
-                  """.trimIndent()
+          Missing path parameter 'user-name'.
+          Malformed query parameter 'age' couldn't be parsed/converted to Int: For input string: "old"
+          Malformed body could not be deserialized to Info: Cannot transform this request's content to arrow.raise.ktor.server.ValidateTest.Info
+          """.trimIndent()
       }
     }
   }
@@ -254,8 +186,8 @@ class ValidateTest {
     routing {
       putOrRaise("/user/{name}") {
         val person = validate {
-          val name: String by pathAccumulating
-          val age: Int by queryAccumulating
+          val name: String by pathRaising()
+          val age: Int by queryAccumulating<_>()
           val info: Info by receiveAccumulating()
           Person(name, age, info)
         }
@@ -270,7 +202,7 @@ class ValidateTest {
       setBody("""{"email":"don@key.io"}""")
     }) {
       it.status shouldBe HttpStatusCode.Created
-      Json.Default.parseToJsonElement(it.bodyAsText()) shouldBe
+      Json.parseToJsonElement(it.bodyAsText()) shouldBe
         buildJsonObject {
           put("name", "bob")
           put("age", 31)
@@ -299,7 +231,6 @@ class ValidateTest {
     routing {
       putOrRaise("/user/{id}") {
         val person = validate(::validationError) {
-          call.queryParameters
           val name by accumulating { pathOrRaise("name") }
           val age by accumulating { queryOrRaise<Int>("age") }
           val info by accumulating { receiveOrRaise<Info>() }
@@ -315,11 +246,13 @@ class ValidateTest {
     }.let {
       assertSoftly {
         it.status shouldBe HttpStatusCode.BadRequest
-        Json.Default.parseToJsonElement(it.bodyAsText()) shouldBe buildJsonObject {
-          putJsonArray("errors") {
-            add("Missing path parameter 'name'.")
-            add("Malformed query parameter 'age' couldn't be parsed/converted to Int: For input string: \"old\"")
-            add("Malformed body could not be deserialized to Info: Cannot transform this request's content to arrow.raise.ktor.server.ValidateTest.Info")
+        it.bodyAsText().asClue {
+          Json.parseToJsonElement(it) shouldBe buildJsonObject {
+            putJsonArray("errors") {
+              add("Missing path parameter 'name'.")
+              add("Malformed query parameter 'age' couldn't be parsed/converted to Int: For input string: \"old\"")
+              add("Malformed body could not be deserialized to Info: Cannot transform this request's content to arrow.raise.ktor.server.ValidateTest.Info")
+            }
           }
         }
       }
@@ -361,7 +294,7 @@ class ValidateTest {
     }.let {
       assertSoftly {
         it.status shouldBe HttpStatusCode.BadRequest
-        Json.Default.parseToJsonElement(it.bodyAsText()) shouldBe buildJsonObject {
+        Json.parseToJsonElement(it.bodyAsText()) shouldBe buildJsonObject {
           putJsonArray("errors") {
             add("Missing path parameter 'name'.")
             add("Malformed query parameter 'age' couldn't be parsed/converted to Int: For input string: \"old\"")
@@ -393,7 +326,7 @@ class ValidateTest {
         }
 
         getOrRaise("/{name?}") {
-          val name: String by pathRaising
+          val name: String by pathRaising()
           name
         }
       }
