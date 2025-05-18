@@ -31,7 +31,8 @@ context(raise: Raise<Error>) @RaiseDSL public inline fun <Error> ensure(conditio
   raise.ensure(condition, otherwise)
 }
 
-context(raise: Raise<Error>) @RaiseDSL public inline fun <Error, B : Any> ensureNotNull(value: B?, otherwise: () -> Error): B {
+context(raise: Raise<Error>) @RaiseDSL
+public inline fun <Error, B : Any> ensureNotNull(value: B?, otherwise: () -> Error): B {
   contract { returns() implies (value != null) }
   return raise.ensureNotNull(value, otherwise)
 }

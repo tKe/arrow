@@ -6,8 +6,7 @@ package arrow.raise.ktor.server.request
 
 import arrow.core.raise.Raise
 import arrow.core.raise.catch
-import arrow.raise.ktor.server.Response
-import arrow.raise.ktor.server.raisingErrorResponse
+import io.ktor.http.Parameters
 import io.ktor.serialization.*
 import io.ktor.server.plugins.*
 import io.ktor.server.plugins.ContentTransformationException
@@ -21,28 +20,16 @@ import kotlin.jvm.JvmMultifileClass
 import kotlin.jvm.JvmName
 
 context(r: Raise<RequestError>)
-public suspend inline fun <reified A : Any> receiveOrRaise(call: RoutingCall): A =
-  call.receiveOrRaise(typeInfo<A>())
+public suspend inline fun <reified A : Any> RoutingCall.receiveOrRaise(): A =
+  receiveOrRaise(typeInfo<A>())
 
 context(r: Raise<RequestError>)
-public suspend inline fun <reified A : Any> receiveNullableOrRaise(call: RoutingCall): A? =
-  call.receiveNullableOrRaise(typeInfo<A>())
+public suspend inline fun <reified A : Any> RoutingCall.receiveNullableOrRaise(): A? =
+  receiveNullableOrRaise(typeInfo<A>())
 
-context(r: Raise<Response>)
-public suspend inline fun <reified A : Any> RoutingContext.receiveOrRaise(): A =
-  raisingErrorResponse { call.receiveOrRaise(typeInfo<A>()) }
-
-context(r: Raise<Response>)
-public suspend inline fun <reified A : Any> RoutingContext.receiveNullableOrRaise(): A? =
-  raisingErrorResponse { call.receiveNullableOrRaise(typeInfo<A>()) }
-
-context(ctx: RoutingContext)
-public suspend inline fun <reified A : Any> Raise<RequestError>.receiveOrRaise(): A =
-  ctx.call.receiveOrRaise(typeInfo<A>())
-
-context(ctx: RoutingContext)
-public suspend inline fun <reified A : Any> Raise<RequestError>.receiveNullableOrRaise(): A? =
-  ctx.call.receiveNullableOrRaise(typeInfo<A>())
+context(r: Raise<RequestError>)
+public suspend fun RoutingCall.formParameters(): RaisingParameters =
+  RaisingParameters(this@formParameters, receiveOrRaise<Parameters>(), Parameter::Form)
 
 context(r: Raise<Malformed>)
 @PublishedApi

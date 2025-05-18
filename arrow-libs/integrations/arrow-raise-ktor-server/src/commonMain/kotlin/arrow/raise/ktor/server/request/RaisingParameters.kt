@@ -1,16 +1,13 @@
 package arrow.raise.ktor.server.request
 
 import arrow.core.raise.Raise
-import arrow.raise.ktor.server.Response
-import arrow.raise.ktor.server.raisingErrorResponse
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import io.ktor.util.*
 import io.ktor.util.reflect.*
-import kotlin.jvm.JvmName
 
-public class RaisingParameters(
+public class RaisingParameters internal constructor(
   @PublishedApi internal val call: ApplicationCall,
   private val parameters: Parameters,
   @PublishedApi
@@ -52,19 +49,3 @@ public val RoutingCall.queryRaising: RaisingParameters
   get() = attributes.computeIfAbsent(queryRaisingKey) {
     RaisingParameters(this, queryParameters, Parameter::Query)
   }
-
-context(ctx: RoutingContext)
-public inline val pathRaising: RaisingParameters get() = ctx.call.pathRaising
-
-context(ctx: RoutingContext)
-public inline val queryRaising: RaisingParameters get() = ctx.call.queryRaising
-
-context(r: Raise<Response>)
-public operator fun RaisingParameters.invoke(): RaisingProvider<String> = call.raisingErrorResponse { invoke() }
-
-context(r: Raise<Response>)
-@JvmName("invokeReified")
-public inline operator fun <reified T : Any> RaisingParameters.invoke(): RaisingProvider<T> = call.raisingErrorResponse { invoke<T>() }
-
-context(r: Raise<Response>)
-public inline operator fun <T : Any> RaisingParameters.invoke(crossinline transform: ParameterTransform<T>): RaisingProvider<T> = call.raisingErrorResponse { invoke(transform) }

@@ -17,5 +17,6 @@ internal inline fun <T> provider(crossinline f: (String) -> T): Provider<T> = Pr
 
 @JvmInline
 public value class Value<T>(public val value: T) {
+  @Suppress("NOTHING_TO_INLINE")
   public inline operator fun getValue(thisRef: Any?, property: KProperty<*>): T = value
 }

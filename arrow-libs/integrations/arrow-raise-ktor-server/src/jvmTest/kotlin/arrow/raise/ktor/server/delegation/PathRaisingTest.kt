@@ -26,7 +26,7 @@ class PathRaisingTest {
   fun `raise on missing path parameter as implicit String`() {
     withRoutingContext("", "") {
       val raised = shouldRaise {
-        val paramName by pathRaising()
+        val paramName by call.pathRaising()
         fail("should have raised already")
       }
       assertEquals(MissingParameter(Parameter.Path("paramName")), raised)
@@ -37,7 +37,7 @@ class PathRaisingTest {
   fun `doesn't raise on matching path parameter as String`() {
     withRoutingContext("/{present}", "/hello") {
       val result = shouldNotRaise {
-        val present: String by pathRaising()
+        val present: String by call.pathRaising()
         present
       }
       assertEquals("hello", result)
@@ -48,7 +48,7 @@ class PathRaisingTest {
   fun `raise malformed on transform raise`() {
     withRoutingContext("/{present}", "/hello") {
       val raised = shouldRaise {
-        val present by pathRaising { it.toIntOrNull() ?: raise("not a number") }
+        val present by call.pathRaising { it.toIntOrNull() ?: raise("not a number") }
         fail("should have raised already")
       }
       assertEquals(Malformed(Parameter.Path("present"), "not a number"), raised)
@@ -59,7 +59,7 @@ class PathRaisingTest {
   fun `transformed path parameter`() {
     withRoutingContext("/{present}", "/123") {
       val result = shouldNotRaise {
-        val present by pathRaising { it.toIntOrNull() ?: raise("not a number") }
+        val present by call.pathRaising { it.toIntOrNull() ?: raise("not a number") }
         present
       }
       assertEquals(123, result)
@@ -70,9 +70,9 @@ class PathRaisingTest {
   fun `success across all options`() {
     withRoutingContext("/{a}/{b}/{c}", "/user/123/status") {
       shouldNotRaise {
-        val a by pathRaising()
-        val b by pathRaising<Long>()
-        val c by pathRaising { it.uppercase() }
+        val a by call.pathRaising()
+        val b by call.pathRaising<Long>()
+        val c by call.pathRaising { it.uppercase() }
 
         assertEquals(a, "user")
         assertEquals(b, 123L)
@@ -85,9 +85,9 @@ class PathRaisingTest {
   fun `success across all options inferred`() {
     withRoutingContext("/{a}/{b}/{c}", "/user/123/status") {
       shouldNotRaise {
-        val a: String by pathRaising()
-        val b: Long by pathRaising<_>()
-        val c: String by pathRaising { it.uppercase() }
+        val a: String by call.pathRaising()
+        val b: Long by call.pathRaising<_>()
+        val c: String by call.pathRaising { it.uppercase() }
 
         assertEquals(a, "user")
         assertEquals(b, 123L)

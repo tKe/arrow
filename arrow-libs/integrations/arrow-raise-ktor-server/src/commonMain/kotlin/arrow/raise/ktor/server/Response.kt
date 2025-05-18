@@ -20,9 +20,9 @@ public sealed interface Response {
     public inline fun <reified T> Response(statusCode: HttpStatusCode, value: T): Response = Response(statusCode, value, typeInfo<T>())
 
     // TODO: not sure if we want these three or not - allows for `Response.empty(OK)` and `Response.of(myPayload)` etc
-    public fun empty(statusCode: HttpStatusCode = HttpStatusCode.Companion.NoContent): Response = Response(statusCode)
+    public fun empty(statusCode: HttpStatusCode = HttpStatusCode.NoContent): Response = Response(statusCode)
     public fun raw(outgoingContent: OutgoingContent): Response = Response(outgoingContent)
-    public inline fun <reified T> payload(value: T, statusCode: HttpStatusCode = HttpStatusCode.Companion.OK): Response = Response(statusCode, value, typeInfo<T>())
+    public inline fun <reified T> payload(value: T, statusCode: HttpStatusCode = HttpStatusCode.OK): Response = Response(statusCode, value, typeInfo<T>())
 
     // allows using a HttpStatusCode as a "constructor" of a response, i.e. `NotFound("user was missing")`
     public inline operator fun <reified T : Any> HttpStatusCode.invoke(payload: T): Response = Response(this, payload, typeInfo<T>())

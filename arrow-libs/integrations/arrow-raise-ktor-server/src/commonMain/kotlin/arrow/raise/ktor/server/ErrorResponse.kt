@@ -47,7 +47,7 @@ public val RaiseErrorResponse: RouteScopedPlugin<RaiseErrorResponseConfig> = cre
 }
 
 private fun defaultErrorsResponse(errors: NonEmptyList<RequestError>): Response =
-  Response.Companion.raw(
+  Response.raw(
     TextContent(
       text = errors.joinToString("\n") { it.toSimpleMessage() },
       contentType = ContentType.Text.Plain,

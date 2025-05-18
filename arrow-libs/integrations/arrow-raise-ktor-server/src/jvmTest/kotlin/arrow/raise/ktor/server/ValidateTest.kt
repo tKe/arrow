@@ -9,6 +9,8 @@ import arrow.raise.context.*
 import arrow.raise.ktor.server.Response.Companion.invoke
 import arrow.raise.ktor.server.delegation.*
 import arrow.raise.ktor.server.request.*
+import arrow.raise.ktor.server.request.pathAccumulating
+import arrow.raise.ktor.server.request.queryAccumulating
 import io.kotest.assertions.asClue
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.collections.shouldContain
@@ -49,9 +51,9 @@ class ValidateTest {
       putOrRaise("/user/{id}") {
         val person = withError<Response, _, _>(call::errorsResponse) {
           accumulate {
-            val name by accumulating { pathOrRaise("name") }
-            val age by accumulating { queryOrRaise<Int>("age") }
-            val info by accumulating { receiveOrRaise<Info>() }
+            val name by accumulating { call.pathOrRaise("name") }
+            val age by accumulating { call.queryOrRaise<Int>("age") }
+            val info by accumulating { call.receiveOrRaise<Info>() }
             call.response.header("x-accumulation-complete", "true")
             Person(name, age, info)
           }
@@ -83,13 +85,13 @@ class ValidateTest {
     routing {
       putOrRaise("/user/{id}") {
         val person = validate {
-          val name: String by pathAccumulating()
-          val age: Int by queryAccumulating {
+          val name: String by call.pathAccumulating()
+          val age: Int by call.queryAccumulating { it: String ->
             val age = ensureNotNull(it.toIntOrNull()) { "not a valid number" }
             ensure(age >= 21) { "too young" }
             age
           }
-          val info: Info by receiveAccumulating()
+          val info: Info by call.receiveAccumulating()
           Person(name, age, info)
         }
 
@@ -123,9 +125,9 @@ class ValidateTest {
     routing {
       putOrRaise("/user/{name}") {
         val person = validate {
-          val name: String by pathAccumulating["user-name"]
-          val age: Int by queryAccumulating["age"]
-          val info: Info by receiveAccumulating()
+          val name: String by call.pathAccumulating["user-name"]
+          val age: Int by call.queryAccumulating["age"]
+          val info: Info by call.receiveAccumulating()
           Person(name, age, info)
         }
         HttpStatusCode.Created(person)
@@ -154,9 +156,9 @@ class ValidateTest {
     routing {
       putOrRaise("/user/{id}") {
         val person = validate {
-          val name by pathAccumulating("user-name") { it }
-          val age: Int by queryAccumulating("age") { it.toIntOrNull() ?: raise("nope") }
-          val info: Info by receiveAccumulating()
+          val name by call.pathAccumulating("user-name") { it: String -> it }
+          val age: Int by call.queryAccumulating("age") { it: String -> it.toIntOrNull() ?: raise("nope") }
+          val info: Info by call.receiveAccumulating()
           Person(name, age, info)
         }
 
@@ -186,9 +188,9 @@ class ValidateTest {
     routing {
       putOrRaise("/user/{name}") {
         val person = validate {
-          val name: String by pathRaising()
-          val age: Int by queryAccumulating<_>()
-          val info: Info by receiveAccumulating()
+          val name: String by call.pathRaising()
+          val age: Int by call.queryAccumulating<_>()
+          val info: Info by call.receiveAccumulating()
           Person(name, age, info)
         }
 
@@ -231,9 +233,9 @@ class ValidateTest {
     routing {
       putOrRaise("/user/{id}") {
         val person = validate(::validationError) {
-          val name by accumulating { pathOrRaise("name") }
-          val age by accumulating { queryOrRaise<Int>("age") }
-          val info by accumulating { receiveOrRaise<Info>() }
+          val name by accumulating { call.pathOrRaise("name") }
+          val age by accumulating { call.queryOrRaise<Int>("age") }
+          val info by accumulating { call.receiveOrRaise<Info>() }
           Person(name, age, info)
         }
         HttpStatusCode.Created(person)
@@ -279,9 +281,9 @@ class ValidateTest {
       }
       putOrRaise("/user/{id}") {
         val person = validate {
-          val name by accumulating { pathOrRaise("name") }
-          val age by accumulating { queryOrRaise<Int>("age") }
-          val info by accumulating { receiveOrRaise<Info>() }
+          val name by accumulating { call.pathOrRaise("name") }
+          val age by accumulating { call.queryOrRaise<Int>("age") }
+          val info by accumulating { call.receiveOrRaise<Info>() }
           Person(name, age, info)
         }
         HttpStatusCode.Created(person)
@@ -315,7 +317,7 @@ class ValidateTest {
       }
 
       getOrRaise("/fail") {
-        pathOrRaise("nothing")
+        call.pathOrRaise("nothing")
       }
 
       route("/user") {
@@ -326,7 +328,7 @@ class ValidateTest {
         }
 
         getOrRaise("/{name?}") {
-          val name: String by pathRaising()
+          val name: String by call.pathRaising()
           name
         }
       }

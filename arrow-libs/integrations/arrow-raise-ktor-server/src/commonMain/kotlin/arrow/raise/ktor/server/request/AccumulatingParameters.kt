@@ -2,13 +2,14 @@ package arrow.raise.ktor.server.request
 
 import arrow.core.raise.ExperimentalRaiseAccumulateApi
 import arrow.core.raise.RaiseAccumulate
-import io.ktor.http.Parameters
+import io.ktor.http.*
 import io.ktor.server.routing.*
 import kotlin.jvm.JvmInline
-import kotlin.jvm.JvmName
 
 @JvmInline
-public value class AccumulatingParameters(@PublishedApi internal val parameters: RaisingParameters): Parameters by parameters {
+public value class AccumulatingParameters(
+  @PublishedApi internal val parameters: RaisingParameters
+) : Parameters by parameters {
   context(r: RaiseAccumulate<RequestError>)
   @ExperimentalRaiseAccumulateApi
   public operator fun invoke(name: String): RaiseAccumulate.Value<String> =
@@ -22,11 +23,11 @@ public value class AccumulatingParameters(@PublishedApi internal val parameters:
   context(r: RaiseAccumulate<RequestError>)
   @ExperimentalRaiseAccumulateApi
   public inline operator fun <T : Any> invoke(name: String, transform: ParameterTransform<T>): RaiseAccumulate.Value<T> =
-    r.accumulating { parameters(name,transform) }
+    r.accumulating { parameters(name, transform) }
 
   context(_: RaiseAccumulate<RequestError>)
   @ExperimentalRaiseAccumulateApi
-  public inline operator fun <reified T: Any> get(name: String): RaiseAccumulate.Value<T> = invoke<T>(name)
+  public inline operator fun <reified T : Any> get(name: String): RaiseAccumulate.Value<T> = invoke<T>(name)
 
   context(r: RaiseAccumulate<RequestError>)
   @ExperimentalRaiseAccumulateApi
@@ -44,12 +45,8 @@ public value class AccumulatingParameters(@PublishedApi internal val parameters:
     provider { invoke(it, transform) }
 }
 
-context(ctx: RoutingContext)
-public inline val pathAccumulating: AccumulatingParameters get() = ctx.call.pathAccumulating
+public inline val RoutingCall.pathAccumulating: AccumulatingParameters
+  get() = AccumulatingParameters(pathRaising)
 
-context(ctx: RoutingContext)
-public inline val queryAccumulating: AccumulatingParameters get() = ctx.call.queryAccumulating
-
-public inline val RoutingCall.pathAccumulating: AccumulatingParameters get() = AccumulatingParameters(pathRaising)
-
-public inline val RoutingCall.queryAccumulating: AccumulatingParameters get() = AccumulatingParameters(queryRaising)
+public inline val RoutingCall.queryAccumulating: AccumulatingParameters
+  get() = AccumulatingParameters(queryRaising)

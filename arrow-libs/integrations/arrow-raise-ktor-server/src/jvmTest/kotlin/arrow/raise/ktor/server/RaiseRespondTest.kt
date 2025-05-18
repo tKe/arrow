@@ -121,7 +121,7 @@ class RaiseRespondTest {
   fun `respond with raised statusCode when getOrRaise returns status code`() = testApplication {
     routing {
       getOrRaise<Unit>("/foo", statusCode = HttpStatusCode.Created) {
-        ensureNotNull(emptyList<Unit>().firstOrNull()) { Response(HttpStatusCode.Conflict) }
+        ensureNotNull<Response, _>(emptyList<Unit>().firstOrNull()) { Response(HttpStatusCode.Conflict) }
       }
     }
 
@@ -206,7 +206,7 @@ class RaiseRespondTest {
     routing {
       getOrRaise("/users/{userId?}") {
         val userId = call.pathParameters["userId"] ?: raise(BadRequest("userId not specified"))
-        withError(::handleError) {
+        withError<Response, _, _>(::handleError) {
           with(userService) {
             lookupUser(userId) ?: raise(HttpStatusCode.NotFound)
           }

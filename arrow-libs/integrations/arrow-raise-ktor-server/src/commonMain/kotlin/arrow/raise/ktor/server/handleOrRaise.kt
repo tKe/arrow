@@ -11,7 +11,7 @@ import io.ktor.server.routing.*
 import io.ktor.utils.io.*
 import kotlin.jvm.JvmName
 
-public typealias RaiseRoutingHandler = suspend context(Raise<Response>) RoutingContext.() -> Unit
+public typealias RaiseRoutingHandler = suspend context(Raise<Response>, Raise<RequestError>) RoutingContext.() -> Unit
 
 @KtorDsl
 @RaiseDSL
@@ -20,7 +20,7 @@ public fun Route.handleOrRaise(body: RaiseRoutingHandler): Unit = handle { handl
 @PublishedApi
 internal suspend inline fun RoutingContext.handleOrRaise(body: RaiseRoutingHandler): Unit =
   @Suppress("RemoveExplicitTypeArguments")
-  recover<Response, _>({ body() }) { it.respondTo(call) }
+  recover<Response, _>({ call.raisingErrorResponse { body() } }) { it.respondTo(call) }
 
 @RaiseDSL
 public fun Raise<Response>.raise(outgoingContent: OutgoingContent): Nothing = raise(Response(outgoingContent))
