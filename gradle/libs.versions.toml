@@ -5,7 +5,7 @@ classgraph = "4.8.179"
 dokka = "2.0.0"
 kotest = "6.0.0.M4"
 kover = "0.9.1"
-kotlin = "2.1.20"
+kotlin = "2.2.0-RC"
 kotlinBinaryCompatibilityValidator = "0.17.0"
 kotlinCompileTesting = "0.7.1"
 knit = "0.5.0"
@@ -47,6 +47,8 @@ ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-test = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
 ktor-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
 ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
+ktor-server-contentNegotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
+ktor-serialization-kotlinxJson = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 # required for the convention plugin
 gradlePlugin-kotlin-base = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 gradlePlugin-kotlin-multiplatform = { module = "org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin", version.ref = "kotlin"}
