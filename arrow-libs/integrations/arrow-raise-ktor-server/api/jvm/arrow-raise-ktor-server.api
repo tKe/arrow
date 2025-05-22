@@ -1,15 +1,3 @@
-public class arrow/raise/ktor/server/CallRaiseContext {
-	public final fun getCall ()Lio/ktor/server/routing/RoutingCall;
-	public final fun pathOrAccumulate (Larrow/core/raise/RaiseAccumulate;Ljava/lang/String;)Larrow/core/raise/RaiseAccumulate$Value;
-	public final fun pathOrAccumulate (Larrow/core/raise/RaiseAccumulate;Ljava/lang/String;Lkotlin/jvm/functions/Function2;)Larrow/core/raise/RaiseAccumulate$Value;
-	public final fun pathOrRaise (Larrow/core/raise/Raise;Ljava/lang/String;)Ljava/lang/String;
-	public final fun pathOrRaise (Larrow/core/raise/Raise;Ljava/lang/String;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
-	public final fun queryOrAccumulate (Larrow/core/raise/RaiseAccumulate;Ljava/lang/String;)Larrow/core/raise/RaiseAccumulate$Value;
-	public final fun queryOrAccumulate (Larrow/core/raise/RaiseAccumulate;Ljava/lang/String;Lkotlin/jvm/functions/Function2;)Larrow/core/raise/RaiseAccumulate$Value;
-	public final fun queryOrRaise (Larrow/core/raise/Raise;Ljava/lang/String;)Ljava/lang/String;
-	public final fun queryOrRaise (Larrow/core/raise/Raise;Ljava/lang/String;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
-}
-
 public final class arrow/raise/ktor/server/ErrorResponseKt {
 	public static final fun errorResponse (Lio/ktor/server/application/ApplicationCall;Larrow/raise/ktor/server/request/RequestError;)Larrow/raise/ktor/server/Response;
 	public static final fun errorsResponse-EgRvm48 (Lio/ktor/server/application/ApplicationCall;Ljava/util/List;)Larrow/raise/ktor/server/Response;
@@ -17,15 +5,12 @@ public final class arrow/raise/ktor/server/ErrorResponseKt {
 }
 
 public final class arrow/raise/ktor/server/HandleOrRaiseKt {
-	public static final fun handleOrRaise (Lio/ktor/server/routing/Route;Lkotlin/jvm/functions/Function2;)V
-	public static final fun handleOrRaise (Lio/ktor/server/routing/RoutingContext;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun handleOrRaise (Lio/ktor/server/routing/Route;Lkotlin/jvm/functions/Function4;)V
+	public static final fun handleOrRaise (Lio/ktor/server/routing/RoutingContext;Lkotlin/jvm/functions/Function4;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun raise (Larrow/core/raise/Raise;Lio/ktor/http/HttpStatusCode;)Ljava/lang/Void;
 	public static final fun raise (Larrow/core/raise/Raise;Lio/ktor/http/content/OutgoingContent;)Ljava/lang/Void;
-}
-
-public final class arrow/raise/ktor/server/RaiseErrorKt {
-	public static final fun raiseError (Larrow/raise/ktor/server/RaiseRoutingContext;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
-	public static final fun raiseErrors (Larrow/raise/ktor/server/RaiseRoutingContext;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public static final fun raiseOutgoingContent (Larrow/core/raise/Raise;Lio/ktor/http/content/OutgoingContent;)Ljava/lang/Void;
+	public static final fun raiseStatusCode (Larrow/core/raise/Raise;Lio/ktor/http/HttpStatusCode;)Ljava/lang/Void;
 }
 
 public final class arrow/raise/ktor/server/RaiseErrorResponseConfig {
@@ -37,35 +22,21 @@ public final class arrow/raise/ktor/server/RaiseErrorResponseConfig {
 	public final fun setErrorResponse (Lkotlin/jvm/functions/Function1;)V
 }
 
-public final class arrow/raise/ktor/server/RaiseRoutingContext : arrow/raise/ktor/server/CallRaiseContext, arrow/core/raise/Raise {
-	public fun <init> (Larrow/core/raise/Raise;Lio/ktor/server/routing/RoutingContext;)V
-	public fun bind (Larrow/core/Either;)Ljava/lang/Object;
-	public fun bind (Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
-	public fun bind (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun bindAll (Ljava/lang/Iterable;)Ljava/util/List;
-	public fun bindAll (Ljava/util/Map;)Ljava/util/Map;
-	public fun bindAll-1TN0_VU (Ljava/util/Set;)Ljava/util/Set;
-	public fun bindAll-vcjLgH4 (Ljava/util/List;)Ljava/util/List;
-	public final fun formParametersDelegate (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun getErrorRaise ()Larrow/core/raise/Raise;
-	public final fun getPathRaising ()Larrow/raise/ktor/server/request/RaisingParameterProvider;
-	public final fun getQueryRaising ()Larrow/raise/ktor/server/request/RaisingParameterProvider;
-	public fun invoke (Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
-	public fun invoke (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun raise (Larrow/raise/ktor/server/Response;)Ljava/lang/Void;
-	public final fun raise (Larrow/raise/ktor/server/request/RequestError;)Ljava/lang/Void;
-	public synthetic fun raise (Ljava/lang/Object;)Ljava/lang/Void;
+public final class arrow/raise/ktor/server/RaisingErrorResponseKt {
+	public static final fun imap (Larrow/core/raise/Raise;Lkotlin/jvm/functions/Function1;)Larrow/core/raise/Raise;
+	public static final fun raisingErrorResponse (Larrow/core/raise/Raise;Lio/ktor/server/application/ApplicationCall;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public static final fun raisingErrorsResponse (Larrow/core/raise/Raise;Lio/ktor/server/application/ApplicationCall;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 }
 
 public abstract interface class arrow/raise/ktor/server/ReceivingRespondingRaiseRoutingHandler {
-	public abstract fun handle (Larrow/raise/ktor/server/RaiseRoutingContext;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun handle (Larrow/core/raise/Raise;Larrow/core/raise/Raise;Lio/ktor/server/routing/RoutingContext;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class arrow/raise/ktor/server/RespondOrRaiseKt {
 	public static final fun respondOrRaise (Lio/ktor/server/routing/RoutingContext;Lio/ktor/http/HttpStatusCode;Lio/ktor/util/reflect/TypeInfo;Lio/ktor/util/reflect/TypeInfo;Larrow/raise/ktor/server/ReceivingRespondingRaiseRoutingHandler;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final fun respondOrRaise (Lio/ktor/server/routing/RoutingContext;Lio/ktor/http/HttpStatusCode;Lio/ktor/util/reflect/TypeInfo;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun respondOrRaise (Lio/ktor/server/routing/RoutingContext;Lio/ktor/http/HttpStatusCode;Lio/ktor/util/reflect/TypeInfo;Lkotlin/jvm/functions/Function4;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun respondOrRaise$default (Lio/ktor/server/routing/RoutingContext;Lio/ktor/http/HttpStatusCode;Lio/ktor/util/reflect/TypeInfo;Lio/ktor/util/reflect/TypeInfo;Larrow/raise/ktor/server/ReceivingRespondingRaiseRoutingHandler;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
-	public static synthetic fun respondOrRaise$default (Lio/ktor/server/routing/RoutingContext;Lio/ktor/http/HttpStatusCode;Lio/ktor/util/reflect/TypeInfo;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static synthetic fun respondOrRaise$default (Lio/ktor/server/routing/RoutingContext;Lio/ktor/http/HttpStatusCode;Lio/ktor/util/reflect/TypeInfo;Lkotlin/jvm/functions/Function4;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static final fun respondSafely (Lio/ktor/server/routing/RoutingCall;Lio/ktor/http/HttpStatusCode;Ljava/lang/Object;Lio/ktor/util/reflect/TypeInfo;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
@@ -83,35 +54,44 @@ public final class arrow/raise/ktor/server/Response$Companion {
 	public final fun raw (Lio/ktor/http/content/OutgoingContent;)Larrow/raise/ktor/server/Response;
 }
 
-public abstract class arrow/raise/ktor/server/request/AccumulatingParameterProvider {
-	public static final field Companion Larrow/raise/ktor/server/request/AccumulatingParameterProvider$Companion;
-	public final fun getReified (Ljava/lang/String;Lio/ktor/util/reflect/TypeInfo;)Larrow/core/raise/RaiseAccumulate$Value;
-	public final fun getString (Ljava/lang/String;)Larrow/core/raise/RaiseAccumulate$Value;
-	public final fun getTransformed (Ljava/lang/String;Lkotlin/jvm/functions/Function2;)Larrow/core/raise/RaiseAccumulate$Value;
-	public final fun invoke ()Lkotlin/properties/PropertyDelegateProvider;
-	public final fun invoke (Lio/ktor/util/reflect/TypeInfo;)Lkotlin/properties/PropertyDelegateProvider;
-	public final fun invoke (Ljava/lang/String;)Larrow/core/raise/RaiseAccumulate$Value;
-	public final fun invoke (Ljava/lang/String;Lkotlin/jvm/functions/Function2;)Larrow/core/raise/RaiseAccumulate$Value;
-	public final fun invoke (Lkotlin/jvm/functions/Function2;)Lkotlin/properties/PropertyDelegateProvider;
-	protected abstract fun parameter (Ljava/lang/String;)Larrow/raise/ktor/server/request/Parameter;
+public final class arrow/raise/ktor/server/request/AccumulatingParameters : io/ktor/http/Parameters {
+	public static final synthetic fun box-impl (Larrow/raise/ktor/server/request/RaisingParameters;)Larrow/raise/ktor/server/request/AccumulatingParameters;
+	public static fun constructor-impl (Larrow/raise/ktor/server/request/RaisingParameters;)Larrow/raise/ktor/server/request/RaisingParameters;
+	public fun contains (Ljava/lang/String;)Z
+	public fun contains (Ljava/lang/String;Ljava/lang/String;)Z
+	public static fun contains-impl (Larrow/raise/ktor/server/request/RaisingParameters;Ljava/lang/String;)Z
+	public static fun contains-impl (Larrow/raise/ktor/server/request/RaisingParameters;Ljava/lang/String;Ljava/lang/String;)Z
+	public fun entries ()Ljava/util/Set;
+	public static fun entries-impl (Larrow/raise/ktor/server/request/RaisingParameters;)Ljava/util/Set;
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (Larrow/raise/ktor/server/request/RaisingParameters;Ljava/lang/Object;)Z
+	public static final fun equals-impl0 (Larrow/raise/ktor/server/request/RaisingParameters;Larrow/raise/ktor/server/request/RaisingParameters;)Z
+	public fun forEach (Lkotlin/jvm/functions/Function2;)V
+	public static fun forEach-impl (Larrow/raise/ktor/server/request/RaisingParameters;Lkotlin/jvm/functions/Function2;)V
+	public fun get (Ljava/lang/String;)Ljava/lang/String;
+	public static fun get-impl (Larrow/raise/ktor/server/request/RaisingParameters;Ljava/lang/String;)Ljava/lang/String;
+	public fun getAll (Ljava/lang/String;)Ljava/util/List;
+	public static fun getAll-impl (Larrow/raise/ktor/server/request/RaisingParameters;Ljava/lang/String;)Ljava/util/List;
+	public fun getCaseInsensitiveName ()Z
+	public static fun getCaseInsensitiveName-impl (Larrow/raise/ktor/server/request/RaisingParameters;)Z
+	public fun hashCode ()I
+	public static fun hashCode-impl (Larrow/raise/ktor/server/request/RaisingParameters;)I
+	public static final fun invoke-impl (Larrow/raise/ktor/server/request/RaisingParameters;Larrow/core/raise/RaiseAccumulate;)Lkotlin/properties/PropertyDelegateProvider;
+	public static final fun invoke-impl (Larrow/raise/ktor/server/request/RaisingParameters;Larrow/core/raise/RaiseAccumulate;Ljava/lang/String;)Larrow/core/raise/RaiseAccumulate$Value;
+	public static final fun invoke-impl (Larrow/raise/ktor/server/request/RaisingParameters;Larrow/core/raise/RaiseAccumulate;Ljava/lang/String;Lkotlin/jvm/functions/Function2;)Larrow/core/raise/RaiseAccumulate$Value;
+	public static final fun invoke-impl (Larrow/raise/ktor/server/request/RaisingParameters;Larrow/core/raise/RaiseAccumulate;Lkotlin/jvm/functions/Function2;)Lkotlin/properties/PropertyDelegateProvider;
+	public fun isEmpty ()Z
+	public static fun isEmpty-impl (Larrow/raise/ktor/server/request/RaisingParameters;)Z
+	public fun names ()Ljava/util/Set;
+	public static fun names-impl (Larrow/raise/ktor/server/request/RaisingParameters;)Ljava/util/Set;
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (Larrow/raise/ktor/server/request/RaisingParameters;)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()Larrow/raise/ktor/server/request/RaisingParameters;
 }
 
-public final class arrow/raise/ktor/server/request/AccumulatingParameterProvider$Companion {
-	public final fun invoke (Larrow/core/raise/RaiseAccumulate;Lio/ktor/http/Parameters;Lkotlin/jvm/functions/Function1;)Larrow/raise/ktor/server/request/AccumulatingParameterProvider;
-}
-
-public final class arrow/raise/ktor/server/request/CallValidationContext : arrow/core/raise/RaiseAccumulate {
-	public fun <init> (Lio/ktor/server/routing/RoutingCall;Larrow/core/raise/Raise;)V
-	public final fun formParametersDelegate (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun getCall ()Lio/ktor/server/routing/RoutingCall;
-	public final fun getPathAccumulating ()Larrow/raise/ktor/server/request/AccumulatingParameterProvider;
-	public final fun getQueryAccumulating ()Larrow/raise/ktor/server/request/AccumulatingParameterProvider;
-}
-
-public final class arrow/raise/ktor/server/request/CallValidationContextKt {
-	public static final fun validate (Larrow/raise/ktor/server/RaiseRoutingContext;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
-	public static final fun validate (Lio/ktor/server/routing/RoutingCall;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
-	public static synthetic fun validate$default (Larrow/raise/ktor/server/RaiseRoutingContext;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Ljava/lang/Object;
+public final class arrow/raise/ktor/server/request/AccumulatingParametersKt {
+	public static final fun getPathAccumulating (Lio/ktor/server/routing/RoutingCall;)Larrow/raise/ktor/server/request/RaisingParameters;
+	public static final fun getQueryAccumulating (Lio/ktor/server/routing/RoutingCall;)Larrow/raise/ktor/server/request/RaisingParameters;
 }
 
 public final class arrow/raise/ktor/server/request/Malformed : arrow/raise/ktor/server/request/RequestError {
@@ -178,22 +158,31 @@ public final class arrow/raise/ktor/server/request/Parameter$Query : arrow/raise
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract class arrow/raise/ktor/server/request/RaisingParameterProvider {
-	public static final field Companion Larrow/raise/ktor/server/request/RaisingParameterProvider$Companion;
-	public final fun getReified (Ljava/lang/String;Lio/ktor/util/reflect/TypeInfo;)Ljava/lang/Object;
-	public final fun getString (Ljava/lang/String;)Ljava/lang/String;
-	public final fun getTransformed (Ljava/lang/String;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
-	public final fun invoke ()Lkotlin/properties/ReadOnlyProperty;
-	public final fun invoke (Lio/ktor/util/reflect/TypeInfo;)Lkotlin/properties/ReadOnlyProperty;
-	public final fun invoke (Ljava/lang/String;)Lkotlin/properties/ReadOnlyProperty;
-	public final fun invoke (Ljava/lang/String;Lio/ktor/util/reflect/TypeInfo;)Lkotlin/properties/ReadOnlyProperty;
-	public final fun invoke (Ljava/lang/String;Lkotlin/jvm/functions/Function2;)Lkotlin/properties/ReadOnlyProperty;
-	public final fun invoke (Lkotlin/jvm/functions/Function2;)Lkotlin/properties/ReadOnlyProperty;
-	protected abstract fun parameter (Ljava/lang/String;)Larrow/raise/ktor/server/request/Parameter;
+public final class arrow/raise/ktor/server/request/PredefKt {
+	public static final fun provider (Lkotlin/jvm/functions/Function1;)Lkotlin/properties/PropertyDelegateProvider;
 }
 
-public final class arrow/raise/ktor/server/request/RaisingParameterProvider$Companion {
-	public final fun invoke (Larrow/core/raise/Raise;Lio/ktor/http/Parameters;Lkotlin/jvm/functions/Function1;)Larrow/raise/ktor/server/request/RaisingParameterProvider;
+public final class arrow/raise/ktor/server/request/RaisingParameters : io/ktor/http/Parameters {
+	public fun contains (Ljava/lang/String;)Z
+	public fun contains (Ljava/lang/String;Ljava/lang/String;)Z
+	public fun entries ()Ljava/util/Set;
+	public fun forEach (Lkotlin/jvm/functions/Function2;)V
+	public fun get (Ljava/lang/String;)Ljava/lang/String;
+	public fun getAll (Ljava/lang/String;)Ljava/util/List;
+	public final fun getCall ()Lio/ktor/server/application/ApplicationCall;
+	public fun getCaseInsensitiveName ()Z
+	public final fun getParameter ()Lkotlin/jvm/functions/Function1;
+	public final fun invoke (Larrow/core/raise/Raise;)Lkotlin/properties/PropertyDelegateProvider;
+	public final fun invoke (Larrow/core/raise/Raise;Ljava/lang/String;)Ljava/lang/String;
+	public final fun invoke (Larrow/core/raise/Raise;Ljava/lang/String;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
+	public final fun invoke (Larrow/core/raise/Raise;Lkotlin/jvm/functions/Function2;)Lkotlin/properties/PropertyDelegateProvider;
+	public fun isEmpty ()Z
+	public fun names ()Ljava/util/Set;
+}
+
+public final class arrow/raise/ktor/server/request/RaisingParametersKt {
+	public static final fun getPathRaising (Lio/ktor/server/routing/RoutingCall;)Larrow/raise/ktor/server/request/RaisingParameters;
+	public static final fun getQueryRaising (Lio/ktor/server/routing/RoutingCall;)Larrow/raise/ktor/server/request/RaisingParameters;
 }
 
 public final class arrow/raise/ktor/server/request/ReceiveBody : arrow/raise/ktor/server/request/RequestComponent {
@@ -214,19 +203,21 @@ public final class arrow/raise/ktor/server/request/RequestErrorKt {
 }
 
 public final class arrow/raise/ktor/server/request/RequestRaise {
+	public static final fun formParameters (Larrow/core/raise/Raise;Lio/ktor/server/routing/RoutingCall;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun parameterOrRaise (Larrow/core/raise/Raise;Lio/ktor/http/Parameters;Larrow/raise/ktor/server/request/Parameter;)Ljava/lang/String;
 	public static final fun parameterOrRaise (Larrow/core/raise/Raise;Lio/ktor/http/Parameters;Larrow/raise/ktor/server/request/Parameter;Lio/ktor/util/reflect/TypeInfo;)Ljava/lang/Object;
 	public static final fun parameterOrRaise (Larrow/core/raise/Raise;Lio/ktor/http/Parameters;Larrow/raise/ktor/server/request/Parameter;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
 	public static final fun pathOrRaise (Larrow/core/raise/Raise;Lio/ktor/server/routing/RoutingCall;Ljava/lang/String;)Ljava/lang/String;
 	public static final fun pathOrRaise (Larrow/core/raise/Raise;Lio/ktor/server/routing/RoutingCall;Ljava/lang/String;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
-	public static final fun pathOrRaise (Larrow/raise/ktor/server/RaiseRoutingContext;Ljava/lang/String;)Ljava/lang/String;
-	public static final fun pathOrRaise (Larrow/raise/ktor/server/RaiseRoutingContext;Ljava/lang/String;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
 	public static final fun queryOrRaise (Larrow/core/raise/Raise;Lio/ktor/server/routing/RoutingCall;Ljava/lang/String;)Ljava/lang/String;
 	public static final fun queryOrRaise (Larrow/core/raise/Raise;Lio/ktor/server/routing/RoutingCall;Ljava/lang/String;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
-	public static final fun queryOrRaise (Larrow/raise/ktor/server/RaiseRoutingContext;Ljava/lang/String;)Ljava/lang/String;
-	public static final fun queryOrRaise (Larrow/raise/ktor/server/RaiseRoutingContext;Ljava/lang/String;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
 	public static final fun receiveNullableOrRaise (Larrow/core/raise/Raise;Lio/ktor/server/routing/RoutingCall;Lio/ktor/util/reflect/TypeInfo;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun receiveOrRaise (Larrow/core/raise/Raise;Lio/ktor/server/routing/RoutingCall;Lio/ktor/util/reflect/TypeInfo;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class arrow/raise/ktor/server/request/ValidateKt {
+	public static final fun validate (Larrow/core/raise/Raise;Lio/ktor/server/routing/RoutingContext;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
+	public static synthetic fun validate$default (Larrow/core/raise/Raise;Lio/ktor/server/routing/RoutingContext;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)Ljava/lang/Object;
 }
 
 public final class arrow/raise/ktor/server/request/Value {
@@ -236,7 +227,7 @@ public final class arrow/raise/ktor/server/request/Value {
 	public static fun equals-impl (Ljava/lang/Object;Ljava/lang/Object;)Z
 	public static final fun equals-impl0 (Ljava/lang/Object;Ljava/lang/Object;)Z
 	public final fun getValue ()Ljava/lang/Object;
-	public static final fun getValue-impl (Ljava/lang/Object;Ljava/lang/Void;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
+	public static final fun getValue-impl (Ljava/lang/Object;Ljava/lang/Object;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
 	public fun hashCode ()I
 	public static fun hashCode-impl (Ljava/lang/Object;)I
 	public fun toString ()Ljava/lang/String;

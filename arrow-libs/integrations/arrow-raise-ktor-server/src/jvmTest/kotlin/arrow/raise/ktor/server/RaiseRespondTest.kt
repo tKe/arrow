@@ -2,9 +2,10 @@ package arrow.raise.ktor.server
 
 import arrow.core.raise.Raise
 import arrow.core.raise.ensureNotNull
-import arrow.core.raise.recover
+import arrow.core.raise.raise
 import arrow.core.raise.withError
 import arrow.raise.ktor.server.Response.Companion.Response
+import arrow.raise.ktor.server.Response.Companion.invoke
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.shouldBe
 import io.ktor.client.request.*
@@ -12,13 +13,13 @@ import io.ktor.client.statement.*
 import io.ktor.content.*
 import io.ktor.http.*
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
-import io.ktor.http.HttpStatusCode.Companion.NotFound
+import io.ktor.http.HttpStatusCode.Companion.InternalServerError
 import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.http.HttpStatusCode.Companion.Unauthorized
 import io.ktor.serialization.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.request.*
-import io.ktor.server.routing.get
+import io.ktor.server.routing.*
 import io.ktor.server.testing.*
 import io.ktor.util.reflect.*
 import io.ktor.utils.io.*
@@ -120,7 +121,7 @@ class RaiseRespondTest {
   fun `respond with raised statusCode when getOrRaise returns status code`() = testApplication {
     routing {
       getOrRaise<Unit>("/foo", statusCode = HttpStatusCode.Created) {
-        ensureNotNull(emptyList<Unit>().firstOrNull()) { Response(HttpStatusCode.Conflict) }
+        ensureNotNull<Response, _>(emptyList<Unit>().firstOrNull()) { Response(HttpStatusCode.Conflict) }
       }
     }
 
@@ -168,26 +169,6 @@ class RaiseRespondTest {
   }
 
   @Test
-  fun `pathRaising raises on missing`() = testApplication {
-    routing {
-      getOrRaise("/upper/{text?}") {
-        val text: String by pathRaising
-        text.uppercase()
-      }
-    }
-
-    assertSoftly(client.get("/upper/hello")) {
-      it.status shouldBe OK
-      it.bodyAsText() shouldBe "HELLO"
-    }
-
-    assertSoftly(client.get("/upper")) {
-      it.status shouldBe BadRequest
-      it.bodyAsText() shouldBe "Missing path parameter 'text'."
-    }
-  }
-
-  @Test
   fun `custom domain error handling`() = testApplication {
     // example domain errors/service
     abstract class DomainError
@@ -207,9 +188,9 @@ class RaiseRespondTest {
     // http error representation and handler
     data class ErrorPayload(val code: String, val message: String)
 
-    fun Raise<Response>.handleError(domainError: DomainError): Nothing = when (domainError) {
-      is UserBanned -> raise(Unauthorized, ErrorPayload("Banned", domainError.userId))
-      is ServerError -> raise(HttpStatusCode.InternalServerError, ErrorPayload("ServerError:${domainError.code}", domainError.message))
+    fun handleError(domainError: DomainError): Response = when (domainError) {
+      is UserBanned -> Unauthorized(ErrorPayload("Banned", domainError.userId))
+      is ServerError -> InternalServerError(ErrorPayload("ServerError:${domainError.code}", domainError.message))
       else -> error("no local sealed class ;)")
     }
 
@@ -224,10 +205,10 @@ class RaiseRespondTest {
 
     routing {
       getOrRaise("/users/{userId?}") {
-        val userId = call.pathParameters["userId"] ?: raise(BadRequest, "userId not specified")
-        withError(::handleError) {
+        val userId = call.pathParameters["userId"] ?: raise(BadRequest("userId not specified"))
+        withError<Response, _, _>(::handleError) {
           with(userService) {
-            lookupUser(userId) ?: raise(NotFound)
+            lookupUser(userId) ?: raise(HttpStatusCode.NotFound)
           }
         }
       }
@@ -256,7 +237,7 @@ class RaiseRespondTest {
 
     client.get("/users/carol").let {
       assertSoftly {
-        it.status shouldBe NotFound
+        it.status shouldBe HttpStatusCode.NotFound
         it.bodyAsText() shouldBe ""
       }
     }
