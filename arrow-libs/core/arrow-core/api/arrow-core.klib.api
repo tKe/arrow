@@ -495,8 +495,6 @@ open class <#A: kotlin/Any?> arrow.core.raise/RaiseAccumulate : arrow.core.raise
     sealed interface <#A1: out kotlin/Any?> Value { // arrow.core.raise/RaiseAccumulate.Value|null[0]
         abstract val value // arrow.core.raise/RaiseAccumulate.Value.value|{}value[0]
             abstract fun <get-value>(): #A1 // arrow.core.raise/RaiseAccumulate.Value.value.<get-value>|<get-value>(){}[0]
-
-        open fun getValue(kotlin/Nothing?, kotlin.reflect/KProperty<*>): #A1 // arrow.core.raise/RaiseAccumulate.Value.getValue|getValue(kotlin.Nothing?;kotlin.reflect.KProperty<*>){}[0]
     }
 
     final class <#A1: out kotlin/Any?> Ok : arrow.core.raise/RaiseAccumulate.Value<#A1> { // arrow.core.raise/RaiseAccumulate.Ok|null[0]
