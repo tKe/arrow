@@ -6,7 +6,7 @@ package arrow.raise.ktor.server.request
 
 import arrow.core.raise.Raise
 import arrow.core.raise.catch
-import io.ktor.http.Parameters
+import io.ktor.http.*
 import io.ktor.serialization.*
 import io.ktor.server.plugins.*
 import io.ktor.server.plugins.ContentTransformationException
@@ -29,7 +29,7 @@ public suspend inline fun <reified A : Any> RoutingCall.receiveNullableOrRaise()
 
 context(r: Raise<RequestError>)
 public suspend fun RoutingCall.formParameters(): RaisingParameters =
-  RaisingParameters(this@formParameters, receiveOrRaise<Parameters>(), Parameter::Form)
+  RaisingParameters(receiveOrRaise<Parameters>(), Parameter::Form)
 
 context(r: Raise<Malformed>)
 @PublishedApi
@@ -52,6 +52,7 @@ private inline fun <A> Raise<Malformed>.handleConversionError(
     val cause = when (it) {
       is ContentTransformationException,
       is ContentConvertException -> it
+
       is BadRequestException -> it.findConvertException() ?: it
       else -> throw it
     }

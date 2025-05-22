@@ -1,7 +1,7 @@
 package arrow.raise.ktor.server
 
 import arrow.core.raise.ensure
-import arrow.raise.context.withError
+import arrow.core.raise.withError
 import io.kotest.assertions.asClue
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.collections.shouldHaveSize
@@ -79,14 +79,14 @@ class HandleOrRaiseTest {
     routing {
       handleOrRaise {
         // equivalent of `call.respond(BadRequest, "Hello world!")
-        raise(HttpStatusCode.BadRequest, "Hello world!")
+        raise(BadRequest, "Hello world!")
       }
     }
 
     val response = client.get { expectSuccess = false }
 
     assertSoftly {
-      response.status shouldBe HttpStatusCode.BadRequest
+      response.status shouldBe BadRequest
       response.contentType().shouldNotBeNull().withoutParameters() shouldBe ContentType.Text.Plain
       response.bodyAsText() shouldBe "Hello world!"
     }
@@ -103,7 +103,7 @@ class HandleOrRaiseTest {
     }
     routing {
       handleOrRaise {
-        raise(HttpStatusCode.BadRequest, listOf("Hello", "world!"))
+        raise(BadRequest, listOf("Hello", "world!"))
       }
     }
 

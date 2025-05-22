@@ -1,27 +1,20 @@
-// Temporary copy until arrow-raise-contextual lands in main
-
+// duplicated from https://github.com/arrow-kt/arrow/pull/3606
 @file:OptIn(ExperimentalTypeInference::class, ExperimentalContracts::class)
-@file:Suppress("RedundantVisibilityModifier", "Unused")
+@file:JvmMultifileClass
+@file:JvmName("RaiseContextualKt")
 
-package arrow.raise.context
+package arrow.core.raise
 
 import arrow.core.Either
 import arrow.core.NonEmptyList
 import arrow.core.NonEmptySet
 import arrow.core.Option
 import arrow.core.Some
-import arrow.core.raise.*
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 import kotlin.experimental.ExperimentalTypeInference
+import kotlin.jvm.JvmMultifileClass
 import kotlin.jvm.JvmName
-import arrow.core.raise.Raise as CoreRaise
-import arrow.core.raise.SingletonRaise as CoreSingletonRaise
-import arrow.core.raise.ResultRaise as CoreResultRaise
-
-public typealias Raise<Error> = CoreRaise<Error>
-public typealias SingletonRaise<Error> = CoreSingletonRaise<Error>
-public typealias ResultRaise = CoreResultRaise
 
 context(raise: Raise<Error>) @RaiseDSL public fun <Error> raise(e: Error): Nothing =
   raise.raise(e)
@@ -31,15 +24,14 @@ context(raise: Raise<Error>) @RaiseDSL public inline fun <Error> ensure(conditio
   raise.ensure(condition, otherwise)
 }
 
-context(raise: Raise<Error>) @RaiseDSL
-public inline fun <Error, B : Any> ensureNotNull(value: B?, otherwise: () -> Error): B {
+context(raise: Raise<Error>) @RaiseDSL public inline fun <Error, B : Any> ensureNotNull(value: B?, otherwise: () -> Error): B {
   contract { returns() implies (value != null) }
   return raise.ensureNotNull(value, otherwise)
 }
 
 context(raise: Raise<Error>) @RaiseDSL public inline fun <Error, OtherError, A> withError(
   transform: (OtherError) -> Error,
-  @BuilderInference block: CoreRaise<OtherError>.() -> A
+  @BuilderInference block: Raise<OtherError>.() -> A
 ): A = raise.withError(transform, block)
 
 context(raise: Raise<Error>) @RaiseDSL public suspend fun <Error, A> Effect<Error, A>.bind(): A =

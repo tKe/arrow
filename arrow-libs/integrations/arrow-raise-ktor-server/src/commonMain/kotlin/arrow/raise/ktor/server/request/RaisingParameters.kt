@@ -2,13 +2,11 @@ package arrow.raise.ktor.server.request
 
 import arrow.core.raise.Raise
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import io.ktor.util.*
 import io.ktor.util.reflect.*
 
 public class RaisingParameters internal constructor(
-  @PublishedApi internal val call: ApplicationCall,
   private val parameters: Parameters,
   @PublishedApi
   internal val parameter: (String) -> Parameter
@@ -41,11 +39,11 @@ public class RaisingParameters internal constructor(
 private val pathRaisingKey = AttributeKey<RaisingParameters>("pathRaising")
 public val RoutingCall.pathRaising: RaisingParameters
   get() = attributes.computeIfAbsent(pathRaisingKey) {
-    RaisingParameters(this, pathParameters, Parameter::Path)
+    RaisingParameters(pathParameters, Parameter::Path)
   }
 
 private val queryRaisingKey = AttributeKey<RaisingParameters>("queryRaising")
 public val RoutingCall.queryRaising: RaisingParameters
   get() = attributes.computeIfAbsent(queryRaisingKey) {
-    RaisingParameters(this, queryParameters, Parameter::Query)
+    RaisingParameters(queryParameters, Parameter::Query)
   }
