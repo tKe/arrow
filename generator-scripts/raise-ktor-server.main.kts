@@ -95,8 +95,8 @@ val KtorExtension.invocation
 
 val KtorExtension.invocationParams
   get() = when (pathType) {
-    null -> " { respondOrRaise(statusCode, body) }"
-    else -> "(path) { respondOrRaise(statusCode, body) }"
+    null -> " { respondOrRaise(statusCode, body) }.also { install(KtorRaise) }"
+    else -> "(path) { respondOrRaise(statusCode, body) }.also { install(KtorRaise) }"
   }
 //endregion
 
@@ -123,6 +123,7 @@ KtorExtensionAbiGrammer.parseDump(dumpString)
         package arrow.raise.ktor.server.routing
 
         import arrow.core.raise.RaiseDSL
+        import arrow.raise.ktor.server.response.KtorRaise
         import io.ktor.http.*
         import io.ktor.server.routing.*
         import io.ktor.utils.io.*

@@ -7,6 +7,7 @@ import arrow.raise.ktor.server.response.Response.Companion.Response
 import arrow.raise.ktor.server.response.Response.Companion.invoke
 import arrow.raise.ktor.server.routing.getOrRaise
 import arrow.raise.ktor.server.routing.postOrRaise
+import io.kotest.assertions.fail
 import io.kotest.matchers.shouldBe
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -31,9 +32,30 @@ import kotlin.test.Test
 class RespondOrRaiseTest {
   @Test
   fun `respondOrRaise nested in get`() = testApplication {
+    install(KtorRaise)
     routing {
       get("/foo") {
         call.respondOrRaise { "bar" }
+
+        @Suppress("KotlinUnreachableCode")
+        fail("Should not be called")
+      }
+    }
+
+    client.get("/foo").let {
+      it.status shouldBe OK
+      it.bodyAsText() shouldBe "bar"
+    }
+  }
+
+  @Test
+  fun `respondOrRaise nested in route in get`() = testApplication {
+    routing {
+      install(KtorRaise)
+      route("/foo") {
+        get {
+          call.respondOrRaise { "bar" }
+        }
       }
     }
 
@@ -45,6 +67,7 @@ class RespondOrRaiseTest {
 
   @Test
   fun `respondOrRaise with custom error`() = testApplication {
+    install(KtorRaise)
     routing {
       get("/foo") {
         call.respondOrRaise({ err: Int -> BadRequest("Error:$err") }) {
@@ -62,6 +85,7 @@ class RespondOrRaiseTest {
   @Test
   fun `respondOrRaise Unit is NoContent`() = testApplication {
     routing {
+      install(KtorRaise)
       get("/foo") {
         call.respondOrRaise { }
       }
@@ -69,6 +93,21 @@ class RespondOrRaiseTest {
 
     client.get("/foo").let {
       it.status shouldBe HttpStatusCode.NoContent
+      it.bodyAsText() shouldBe ""
+    }
+  }
+
+  @Test
+  fun `respondOrRaise Unit is empty response with specified status`() = testApplication {
+    routing {
+      install(KtorRaise)
+      get("/foo") {
+        call.respondOrRaise(HttpStatusCode.Created) { }
+      }
+    }
+
+    client.get("/foo").let {
+      it.status shouldBe HttpStatusCode.Created
       it.bodyAsText() shouldBe ""
     }
   }

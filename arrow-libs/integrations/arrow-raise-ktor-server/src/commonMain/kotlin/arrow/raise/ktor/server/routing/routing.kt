@@ -3,6 +3,7 @@
 package arrow.raise.ktor.server.routing
 
 import arrow.core.raise.RaiseDSL
+import arrow.raise.ktor.server.response.KtorRaise
 import io.ktor.http.*
 import io.ktor.server.routing.*
 import io.ktor.utils.io.*
@@ -14,7 +15,7 @@ import kotlin.jvm.JvmName
 public inline fun <reified TResponse> Route.deleteOrRaise(
   statusCode: HttpStatusCode? = null,
   crossinline body: RespondingRaiseRoutingHandler<TResponse>,
-): Route = delete { respondOrRaise(statusCode, body) }
+): Route = delete { respondOrRaise(statusCode, body) }.also { install(KtorRaise) }
 
 @KtorDsl
 @RaiseDSL
@@ -23,7 +24,7 @@ public inline fun <reified TResponse> Route.deleteOrRaise(
   path: String,
   statusCode: HttpStatusCode? = null,
   crossinline body: RespondingRaiseRoutingHandler<TResponse>,
-): Route = delete(path) { respondOrRaise(statusCode, body) }
+): Route = delete(path) { respondOrRaise(statusCode, body) }.also { install(KtorRaise) }
 
 @KtorDsl
 @RaiseDSL
@@ -32,7 +33,7 @@ public inline fun <reified TResponse> Route.deleteOrRaise(
   path: Regex,
   statusCode: HttpStatusCode? = null,
   crossinline body: RespondingRaiseRoutingHandler<TResponse>,
-): Route = delete(path) { respondOrRaise(statusCode, body) }
+): Route = delete(path) { respondOrRaise(statusCode, body) }.also { install(KtorRaise) }
 
 @KtorDsl
 @RaiseDSL
@@ -40,7 +41,7 @@ public inline fun <reified TResponse> Route.deleteOrRaise(
 public inline fun <reified TResponse> Route.getOrRaise(
   statusCode: HttpStatusCode? = null,
   crossinline body: RespondingRaiseRoutingHandler<TResponse>,
-): Route = get { respondOrRaise(statusCode, body) }
+): Route = get { respondOrRaise(statusCode, body) }.also { install(KtorRaise) }
 
 @KtorDsl
 @RaiseDSL
@@ -49,7 +50,7 @@ public inline fun <reified TResponse> Route.getOrRaise(
   path: String,
   statusCode: HttpStatusCode? = null,
   crossinline body: RespondingRaiseRoutingHandler<TResponse>,
-): Route = get(path) { respondOrRaise(statusCode, body) }
+): Route = get(path) { respondOrRaise(statusCode, body) }.also { install(KtorRaise) }
 
 @KtorDsl
 @RaiseDSL
@@ -58,7 +59,7 @@ public inline fun <reified TResponse> Route.getOrRaise(
   path: Regex,
   statusCode: HttpStatusCode? = null,
   crossinline body: RespondingRaiseRoutingHandler<TResponse>,
-): Route = get(path) { respondOrRaise(statusCode, body) }
+): Route = get(path) { respondOrRaise(statusCode, body) }.also { install(KtorRaise) }
 
 @KtorDsl
 @RaiseDSL
@@ -66,7 +67,7 @@ public inline fun <reified TResponse> Route.getOrRaise(
 public inline fun <reified TResponse> Route.headOrRaise(
   statusCode: HttpStatusCode? = null,
   crossinline body: RespondingRaiseRoutingHandler<TResponse>,
-): Route = head { respondOrRaise(statusCode, body) }
+): Route = head { respondOrRaise(statusCode, body) }.also { install(KtorRaise) }
 
 @KtorDsl
 @RaiseDSL
@@ -75,7 +76,7 @@ public inline fun <reified TResponse> Route.headOrRaise(
   path: String,
   statusCode: HttpStatusCode? = null,
   crossinline body: RespondingRaiseRoutingHandler<TResponse>,
-): Route = head(path) { respondOrRaise(statusCode, body) }
+): Route = head(path) { respondOrRaise(statusCode, body) }.also { install(KtorRaise) }
 
 @KtorDsl
 @RaiseDSL
@@ -84,7 +85,7 @@ public inline fun <reified TResponse> Route.headOrRaise(
   path: Regex,
   statusCode: HttpStatusCode? = null,
   crossinline body: RespondingRaiseRoutingHandler<TResponse>,
-): Route = head(path) { respondOrRaise(statusCode, body) }
+): Route = head(path) { respondOrRaise(statusCode, body) }.also { install(KtorRaise) }
 
 @KtorDsl
 @RaiseDSL
@@ -92,7 +93,7 @@ public inline fun <reified TResponse> Route.headOrRaise(
 public inline fun <reified TResponse> Route.optionsOrRaise(
   statusCode: HttpStatusCode? = null,
   crossinline body: RespondingRaiseRoutingHandler<TResponse>,
-): Route = options { respondOrRaise(statusCode, body) }
+): Route = options { respondOrRaise(statusCode, body) }.also { install(KtorRaise) }
 
 @KtorDsl
 @RaiseDSL
@@ -101,7 +102,7 @@ public inline fun <reified TResponse> Route.optionsOrRaise(
   path: String,
   statusCode: HttpStatusCode? = null,
   crossinline body: RespondingRaiseRoutingHandler<TResponse>,
-): Route = options(path) { respondOrRaise(statusCode, body) }
+): Route = options(path) { respondOrRaise(statusCode, body) }.also { install(KtorRaise) }
 
 @KtorDsl
 @RaiseDSL
@@ -110,7 +111,7 @@ public inline fun <reified TResponse> Route.optionsOrRaise(
   path: Regex,
   statusCode: HttpStatusCode? = null,
   crossinline body: RespondingRaiseRoutingHandler<TResponse>,
-): Route = options(path) { respondOrRaise(statusCode, body) }
+): Route = options(path) { respondOrRaise(statusCode, body) }.also { install(KtorRaise) }
 
 @KtorDsl
 @RaiseDSL
@@ -118,7 +119,7 @@ public inline fun <reified TResponse> Route.optionsOrRaise(
 public inline fun <reified TResponse> Route.patchOrRaise(
   statusCode: HttpStatusCode? = null,
   crossinline body: RespondingRaiseRoutingHandler<TResponse>,
-): Route = patch { respondOrRaise(statusCode, body) }
+): Route = patch { respondOrRaise(statusCode, body) }.also { install(KtorRaise) }
 
 @KtorDsl
 @RaiseDSL
@@ -127,7 +128,7 @@ public inline fun <reified TResponse> Route.patchOrRaise(
   path: String,
   statusCode: HttpStatusCode? = null,
   crossinline body: RespondingRaiseRoutingHandler<TResponse>,
-): Route = patch(path) { respondOrRaise(statusCode, body) }
+): Route = patch(path) { respondOrRaise(statusCode, body) }.also { install(KtorRaise) }
 
 @KtorDsl
 @RaiseDSL
@@ -136,7 +137,7 @@ public inline fun <reified TResponse> Route.patchOrRaise(
   path: Regex,
   statusCode: HttpStatusCode? = null,
   crossinline body: RespondingRaiseRoutingHandler<TResponse>,
-): Route = patch(path) { respondOrRaise(statusCode, body) }
+): Route = patch(path) { respondOrRaise(statusCode, body) }.also { install(KtorRaise) }
 
 @KtorDsl
 @RaiseDSL
@@ -144,7 +145,7 @@ public inline fun <reified TResponse> Route.patchOrRaise(
 public inline fun <reified TResponse> Route.postOrRaise(
   statusCode: HttpStatusCode? = null,
   crossinline body: RespondingRaiseRoutingHandler<TResponse>,
-): Route = post { respondOrRaise(statusCode, body) }
+): Route = post { respondOrRaise(statusCode, body) }.also { install(KtorRaise) }
 
 @KtorDsl
 @RaiseDSL
@@ -153,7 +154,7 @@ public inline fun <reified TResponse> Route.postOrRaise(
   path: String,
   statusCode: HttpStatusCode? = null,
   crossinline body: RespondingRaiseRoutingHandler<TResponse>,
-): Route = post(path) { respondOrRaise(statusCode, body) }
+): Route = post(path) { respondOrRaise(statusCode, body) }.also { install(KtorRaise) }
 
 @KtorDsl
 @RaiseDSL
@@ -162,7 +163,7 @@ public inline fun <reified TResponse> Route.postOrRaise(
   path: Regex,
   statusCode: HttpStatusCode? = null,
   crossinline body: RespondingRaiseRoutingHandler<TResponse>,
-): Route = post(path) { respondOrRaise(statusCode, body) }
+): Route = post(path) { respondOrRaise(statusCode, body) }.also { install(KtorRaise) }
 
 @KtorDsl
 @RaiseDSL
@@ -170,7 +171,7 @@ public inline fun <reified TResponse> Route.postOrRaise(
 public inline fun <reified TResponse> Route.putOrRaise(
   statusCode: HttpStatusCode? = null,
   crossinline body: RespondingRaiseRoutingHandler<TResponse>,
-): Route = put { respondOrRaise(statusCode, body) }
+): Route = put { respondOrRaise(statusCode, body) }.also { install(KtorRaise) }
 
 @KtorDsl
 @RaiseDSL
@@ -179,7 +180,7 @@ public inline fun <reified TResponse> Route.putOrRaise(
   path: String,
   statusCode: HttpStatusCode? = null,
   crossinline body: RespondingRaiseRoutingHandler<TResponse>,
-): Route = put(path) { respondOrRaise(statusCode, body) }
+): Route = put(path) { respondOrRaise(statusCode, body) }.also { install(KtorRaise) }
 
 @KtorDsl
 @RaiseDSL
@@ -188,4 +189,4 @@ public inline fun <reified TResponse> Route.putOrRaise(
   path: Regex,
   statusCode: HttpStatusCode? = null,
   crossinline body: RespondingRaiseRoutingHandler<TResponse>,
-): Route = put(path) { respondOrRaise(statusCode, body) }
+): Route = put(path) { respondOrRaise(statusCode, body) }.also { install(KtorRaise) }
